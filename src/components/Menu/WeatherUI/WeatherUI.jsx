@@ -3,9 +3,14 @@ import './WeatherUI.css'
 
 function WeatherUI() {
   return (
-    <section id="center">
-      <div>WeatherUI</div>
-    </section>
+    <>
+      <div className='menu-container'>
+        <input type='text' />
+        <button>Confirm</button>
+        <p>Text</p>
+        <p>Text2</p>
+      </div>
+    </>
   )
 }
 
