@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import Body from './components/Body/Body.jsx'
+import { useState, useEffect } from 'react'
 import NextSteps from './components/Menu/NextSteps.jsx'
 import Grass from './components/Body/Grass/Grass.jsx'
 import Background from './components/Body/Background/Background.jsx'
@@ -8,12 +7,17 @@ import Timer from './components/Menu/Timer/Timer.jsx'
 import './App.css'
 
 function App() {
+  const [isHovering, setIsHovering] = useState(false)
+  const [hoverTime, setHoverTime] = useState(0)
+  
   return (
     <>
-      <Grass />
+      <Grass onHoverChange = {setIsHovering}/>
       <Background />
       <WeatherUI />
-      <Timer />
+      <Timer hoverTime = {hoverTime} 
+            setHoverTime={setHoverTime} 
+            isHovering={isHovering}/>
 
       <div className="ticks"></div>
 
