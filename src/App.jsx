@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Body from './components/Body/Body.jsx'
-import NextSteps from './components/NextSteps/NextSteps.jsx'
+import NextSteps from './components/Menu/NextSteps.jsx'
 import './App.css'
 
 function App() {
