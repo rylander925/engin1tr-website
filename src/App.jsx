@@ -10,15 +10,12 @@ import './App.css'
 function App() {
   return (
     <>
-      <Body />
       <Grass />
       <Background />
       <WeatherUI />
       <Timer />
 
       <div className="ticks"></div>
-
-      <NextSteps />
 
       <div className="ticks"></div>
       <section id="spacer"></section>
