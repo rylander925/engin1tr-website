@@ -16,7 +16,7 @@ function formatElapsed(totalSeconds) {
 function Timer() {
   const conditions = useConditions();
   const dispatch = useConditionsDispatch();
-  const UPDATE_TIME = 20 //Time in MS between 1s intervals
+  const UPDATE_TIME = 1000 //Time in MS between 1s intervals
 
   useEffect(() => {
     if(!conditions.isHovering) { return }

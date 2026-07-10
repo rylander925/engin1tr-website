@@ -133,9 +133,9 @@ function Plant( {plant, index, elapsedTime} ) {
                         // (already fully grown) skip the animation entirely and just
                         // render revealed -- no replaying growth on every reload.
                         clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
-                        animation: stillGrowing
-                            ? `growReveal ${GROW_DURATION}s ease-out ${-age}s both`
-                            : undefined,
+                        animation: 
+                             `growReveal ${GROW_DURATION - age}s ease-out ${2}s both`
+                            ,
                     }}
                 />
             </div>

@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import NextSteps from './components/Menu/NextSteps.jsx'
 import Grass from './components/Body/Grass/Grass.jsx'
 import Garden from './components/Body/Grass/Garden.jsx'
@@ -9,9 +8,6 @@ import { ConditionsProvider, useConditions, useConditionsDispatch }  from './Con
 import './App.css'
 
 function App() {
-  const [isHovering, setIsHovering] = useState(false)
-  const [hoverTime, setHoverTime] = useState(0)
-  
   return (
     <>
       <ConditionsProvider>
@@ -21,10 +17,9 @@ function App() {
 
         <div className="ticks"></div>
         <section id="spacer"></section>
-        
+
         <Grass/>
-        <Garden 
-        />
+        <Garden />
       </ConditionsProvider>
     </>
   )
