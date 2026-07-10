@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useConditions, useConditionsDispatch } from '../../../ConditionsContext.jsx'
 import './Timer.css'
 
 function formatElapsed(totalSeconds) {
@@ -12,18 +13,20 @@ function formatElapsed(totalSeconds) {
   return output
 }
 
-function Timer( {hoverTime, setHoverTime, isHovering}) {
+function Timer() {
+  const conditions = useConditions();
+  const dispatch = useConditionsDispatch();
   const UPDATE_TIME = 20 //Time in MS between 1s intervals
 
   useEffect(() => {
-    if(!isHovering) { return }
-    const intervalId = setInterval(() => setHoverTime(prev => prev + 1), UPDATE_TIME)
+    if(!conditions.isHovering) { return }
+    const intervalId = setInterval(() => {dispatch({ type: 'increment-time' })}, UPDATE_TIME)
     return () => clearInterval(intervalId)
-  }, [isHovering])
+  }, [conditions.isHovering])
 
   return (
     <section id="center">
-      <div>You've been touching grass for {formatElapsed(hoverTime)}</div>
+      <div>You've been touching grass for {formatElapsed(conditions.elapsedTime)}</div>
     </section>
   )
 }
