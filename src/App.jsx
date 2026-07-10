@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import NextSteps from './components/Menu/NextSteps.jsx'
 import Grass from './components/Body/Grass/Grass.jsx'
+import Garden from './components/Body/Grass/Garden.jsx'
 import Background from './components/Body/Background/Background.jsx'
 import WeatherUI from './components/Menu/WeatherUI/WeatherUI.jsx'
 import Timer from './components/Menu/Timer/Timer.jsx'
@@ -12,7 +13,7 @@ function App() {
   
   return (
     <>
-      <Grass onHoverChange = {setIsHovering}/>
+      
       <Background />
       <WeatherUI />
       <Timer hoverTime = {hoverTime} 
@@ -23,6 +24,11 @@ function App() {
 
       <div className="ticks"></div>
       <section id="spacer"></section>
+      <Grass onHoverChange = {setIsHovering}/>
+      <Garden 
+        onHoverChange = {setIsHovering}
+        hoverTime = {hoverTime}
+      />
     </>
   )
 }
