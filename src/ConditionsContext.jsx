@@ -3,6 +3,7 @@ import { createContext, useContext, useReducer, useState } from 'react';
 const initialConditions = {
     elapsedTime: 0,
     isHovering: false,
+    seed: 1,
 };
 
 const ConditionsContext = createContext(null);

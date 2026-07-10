@@ -5,6 +5,7 @@ import grass2 from '../../../assets/plants/grass2.svg'
 import grass3 from '../../../assets/plants/grass3.svg'
 import grass4 from '../../../assets/plants/grass4.svg'
 import './Garden.css'
+import { useConditions } from '../../../ConditionsContext'
 const images = import.meta.glob('../../../assets/plants/*.svg')
 
 const BASE_INTERVAL = 5        //generate blade every 10 seconds
@@ -104,7 +105,7 @@ function Plant( {plant, index, elapsedTime} ) {
                     bottom: 0,
                     position: 'absolute',
             }}
-        >
+        > {age}
             <div //AI-ZONE: sway animations
             
                 className = "plant-sway"
@@ -126,7 +127,7 @@ function Plant( {plant, index, elapsedTime} ) {
                                     rotate(${plant.lean}deg)`,
                         filter: `hue-rotate(${plant.hue}deg)`,
 
-                        /*//AI-ZONE: Growth animation
+                         //AI-ZONE: Growth animation
                         // Growth: clip-path doesn't touch `transform`, so it layers on
                         // top of the flip/lean above with no conflict. Older blades
                         // (already fully grown) skip the animation entirely and just
@@ -135,14 +136,6 @@ function Plant( {plant, index, elapsedTime} ) {
                         animation: stillGrowing
                             ? `growReveal ${GROW_DURATION}s ease-out ${-age}s both`
                             : undefined,
-                            */
-                        //AI-ZONE: Growth animation
-                        // Growth: clip-path doesn't touch `transform`, so it layers on
-                        // top of the flip/lean above with no conflict. Older blades
-                        // (already fully grown) skip the animation entirely and just
-                        // render revealed -- no replaying growth on every reload.
-                        clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
-                        animation: `growReveal ${GROW_DURATION}s ease-out ${1}s both`
                     }}
                 />
             </div>
@@ -150,8 +143,12 @@ function Plant( {plant, index, elapsedTime} ) {
     )
 }
 //Make garden div
-export default function Garden({ onHoverChange, hoverTime, seed = 1 }) {
-    const plants = useMemo(() => gardenAt(hoverTime, seed), [hoverTime, seed])
+export default function Garden() {
+    const conditions = useConditions();
+    const plants = useMemo(
+        () => gardenAt(conditions.elapsedTime, conditions.seed), 
+        [conditions.elapsedTime, conditions.seed]
+    );
     
     // Periodic wind gust: toggling one class on the container lets the CSS
     // (see .garden.gusting .blade-sway in Garden.css) override every blade's
@@ -173,7 +170,7 @@ export default function Garden({ onHoverChange, hoverTime, seed = 1 }) {
             {plants.map((plant, index) => <Plant key = {index} 
                                                 plant={plant} 
                                                 index={index} 
-                                                elapsedTime={hoverTime}/>
+                                                elapsedTime={conditions.elapsedTime}/>
             )}
             `garden{gusting ? '-gusting' : ''}`
     </div>
