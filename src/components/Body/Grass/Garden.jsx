@@ -98,7 +98,7 @@ function Plant( {plant, index, elapsedTime} ) {
     const stillGrowing = age < GROW_DURATION
     return(
         //Position wrapper
-        <div
+        <div className='plant'
             style = {{
                     left: `${plant.x}%`,
                     bottom: 0,

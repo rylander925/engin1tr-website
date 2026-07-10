@@ -10,8 +10,8 @@ function Grass( {onHoverChange} ) {
       src={grassImg} 
       className="maingrass" 
       alt="Grass Image" 
-      onMouseEnter={() => onHoverChange(true)}
-      onMouseLeave={() => onHoverChange(false)}
+      onMouseEnter={() => dispatch({type:'set-hovering'})}
+      onMouseLeave={() => dispatch({type:'unset-hovering'})}
     />
   )
 }

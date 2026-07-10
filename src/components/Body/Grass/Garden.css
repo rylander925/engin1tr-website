@@ -1,6 +1,10 @@
 .maingrass {
     height: 300px;
-    width: auto;
+    width: fit-content;
+    position: absolute;
+    left: 50%;
+    bottom: 0%;
+    transform: translateX(-50%)
 }
 
 /* AI ZONE */
