@@ -17,18 +17,13 @@ function App() {
       <ConditionsProvider>
         <Background />
         <WeatherUI />
-        <Timer hoverTime = {hoverTime} 
-              setHoverTime={setHoverTime} 
-              isHovering={isHovering}/>
-
-        <div className="ticks"></div>
+        <Timer/>
 
         <div className="ticks"></div>
         <section id="spacer"></section>
-        <Grass onHoverChange = {setIsHovering}/>
+        
+        <Grass/>
         <Garden 
-          onHoverChange = {setIsHovering}
-          hoverTime = {hoverTime}
         />
       </ConditionsProvider>
     </>
