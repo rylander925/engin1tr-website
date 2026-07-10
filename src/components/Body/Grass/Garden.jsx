@@ -1,13 +1,14 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import grassImg from '../../../assets/grass.png'
 import grass1 from '../../../assets/plants/grass1.svg'
 import grass2 from '../../../assets/plants/grass2.svg'
 import grass3 from '../../../assets/plants/grass3.svg'
 import grass4 from '../../../assets/plants/grass4.svg'
+import './Garden.css'
 const images = import.meta.glob('../../../assets/plants/*.svg')
 
-const BASE_INTERVAL = 50        //generate blade every 10 seconds
-const SLOWDOWN_FACTOR = 0.1     //larger factor slows down growth as # of blades increases
+const BASE_INTERVAL = 5        //generate blade every 10 seconds
+const SLOWDOWN_FACTOR = 1     //larger factor slows down growth as # of blades increases
 
 const VARIANT_NAMES = ['grass1', 'grass2', 'grass3', 'grass4']
 
@@ -18,6 +19,15 @@ const HEIGHT_AVERAGE = 150  // Average plant height
 const HEIGHT_RANGE = 150     // Total plant height range around average
 const LEAN_RANGE = 30       // Range of plant rotation in degrees (around vertical)
 const HUE_SHIFT_RANGE = 40  // Range in hue shift about unchanged image 
+
+//AI-ZONE: Animation controls
+const GROW_DURATION = 5        // seconds -- how long the entrance animation takes
+const SWAY_DURATION_BASE = 3   // seconds -- fastest possible sway cycle
+const SWAY_DURATION_RANGE = 10  // seconds -- spread added on top of the base, per blade
+const SWAY_DELAY_RANGE = 20       // seconds -- randomizes phase so blades don't sync up
+
+const GUST_INTERVAL = 10000 // ms between automatic wind gusts
+const GUST_DURATION = 5000   // ms the gust class stays applied
 
 //TODO: Add support for different plant types
 
@@ -62,7 +72,12 @@ function generateBlade(seed, index) {
         height: HEIGHT_AVERAGE + (rand() - 0.5) * HEIGHT_RANGE,
         flip: rand() < 0.5,
         lean: (rand() - 0.5) * LEAN_RANGE,
-        hue: (rand() - 0.5) * HUE_SHIFT_RANGE
+        hue: (rand() - 0.5) * HUE_SHIFT_RANGE,
+
+        //AI-ZONE: per-blade sway timing
+        //FIXME: Sway twitching
+        swayDuration: SWAY_DURATION_BASE + rand() * SWAY_DURATION_RANGE,
+        swayDelay: rand() * SWAY_DELAY_RANGE,
     }
 }
 
@@ -76,32 +91,91 @@ function gardenAt(elapsedTime, seed = 1) {
 
 //Take blade data to make a blade div
     //TODO: Add support for different plant types (not grass)
-    //TODO: Add animation support
-function Plant( {plant, index} ) {
-    const elapsedTime = timeForIndex(index)
+    //AI-ZONE: Review animation code
+    //FIXME: Sway twitching
+function Plant( {plant, index, elapsedTime} ) {
     const age = elapsedTime - plant.appearTime
-    //TODO: Add animation support; const stillGrowing = age < GROW_DURATION
+    const stillGrowing = age < GROW_DURATION
     return(
-        <img
-            src = {plant.src}
+        //Position wrapper
+        <div
             style = {{
-                height: plant.height,
-                left: `${plant.x}%`,
-                position: 'absolute',
-                transform: `scaleX(${plant.flip ? -1 : 1}) 
-                            rotate(${plant.lean}deg)`,
-                filter: `hue-rotate(${plant.hue}deg)`,
-                transformOrigin: 'bottom center'
+                    left: `${plant.x}%`,
+                    bottom: 0,
+                    position: 'absolute',
             }}
-        />
+        >
+            <div //AI-ZONE: sway animations
+            
+                className = "plant-sway"
+                style = {{
+                    transformOrigin: 'bottom center',
+                    animation: `sway ${plant.swayDuration}s 
+                                ease-in-out ${plant.swayDelay}s infinite`,
+                }}
+            >
+
+                <img
+                    src = {plant.src}
+                    style = {{
+                        height: plant.height,
+                        display: 'block',
+        
+                        transformOrigin: 'bottom center',
+                        transform: `scaleX(${plant.flip ? -1 : 1}) 
+                                    rotate(${plant.lean}deg)`,
+                        filter: `hue-rotate(${plant.hue}deg)`,
+
+                        /*//AI-ZONE: Growth animation
+                        // Growth: clip-path doesn't touch `transform`, so it layers on
+                        // top of the flip/lean above with no conflict. Older blades
+                        // (already fully grown) skip the animation entirely and just
+                        // render revealed -- no replaying growth on every reload.
+                        clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
+                        animation: stillGrowing
+                            ? `growReveal ${GROW_DURATION}s ease-out ${-age}s both`
+                            : undefined,
+                            */
+                        //AI-ZONE: Growth animation
+                        // Growth: clip-path doesn't touch `transform`, so it layers on
+                        // top of the flip/lean above with no conflict. Older blades
+                        // (already fully grown) skip the animation entirely and just
+                        // render revealed -- no replaying growth on every reload.
+                        clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
+                        animation: `growReveal ${GROW_DURATION}s ease-out ${1}s both`
+                    }}
+                />
+            </div>
+        </div>
     )
 }
 //Make garden div
 export default function Garden({ onHoverChange, hoverTime, seed = 1 }) {
     const plants = useMemo(() => gardenAt(hoverTime, seed), [hoverTime, seed])
+    
+    // Periodic wind gust: toggling one class on the container lets the CSS
+    // (see .garden.gusting .blade-sway in Garden.css) override every blade's
+    // sway animation at once, instead of touching each blade in JS.
+    const [gusting, setGusting] = useState(false)
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setGusting(true)
+            setTimeout(() => setGusting(false), GUST_DURATION)
+        }, GUST_INTERVAL)
+        return () => clearInterval(interval)
+    }, [])
+
     return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
-    {plants.map((plant, index) => <Plant key = {index} plant={plant} index={index}/>)}
+        <div
+            className={`garden${gusting ? '-gusting' : ''}`}
+            style={{position: 'relative'}}
+        >
+            {plants.map((plant, index) => <Plant key = {index} 
+                                                plant={plant} 
+                                                index={index} 
+                                                elapsedTime={hoverTime}/>
+            )}
+            `garden{gusting ? '-gusting' : ''}`
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import './Grass.css'
+import './Garden.css'
 import grassImg from '../../../assets/plants/grass1.svg'
-console.log("Grass Image Src: ", grassImg)
 
 function Grass( {onHoverChange} ) {
   return (
@@ -9,7 +8,7 @@ function Grass( {onHoverChange} ) {
       
       <img 
         src={grassImg} 
-        className="grass" 
+        className="maingrass" 
         alt="Grass Image" 
         onMouseEnter={() => onHoverChange(true)}
         onMouseLeave={() => onHoverChange(false)}

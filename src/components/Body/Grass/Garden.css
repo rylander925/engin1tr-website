@@ -1,0 +1,44 @@
+.maingrass {
+    height: 300px;
+    width: auto;
+}
+
+/* AI ZONE */
+
+/* --- Growth --- */
+ 
+/* Default: physically "growing out of the ground" via a bottom-up mask.
+   Doesn't touch `transform`, so it's safe to apply directly to the <img>
+   alongside its static flip/lean/hue styling. */
+@keyframes growReveal {
+  from { clip-path: inset(100% 0 0 0); }
+  to   { clip-path: inset(0% 0 0 0); }
+}
+
+/* --- Ambient wind --- */
+ 
+@keyframes sway {
+  0%, 100% { transform: rotate(-1deg); }
+  50%      { transform: rotate(1deg); }
+}
+ 
+/* --- Gust --- */
+/* One-shot, stronger motion. Triggered by adding .gusting to the garden
+   container (see Garden.jsx) -- the descendant selector below then
+   overrides every blade's sway animation at once, so gusts don't require
+   touching each blade individually in JS. */
+ 
+@keyframes gust {
+  0%   { transform: rotate(0deg); }
+  30%  { transform: rotate(22deg); }
+  60%  { transform: rotate(-8deg); }
+  100% { transform: rotate(0deg); }
+}
+ 
+.garden-gusting .plant-sway {
+  animation-name: gust;
+  animation-duration: 0.9s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in-out;
+}
+ 

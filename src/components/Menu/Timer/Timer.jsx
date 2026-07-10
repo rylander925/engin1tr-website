@@ -13,7 +13,7 @@ function formatElapsed(totalSeconds) {
 }
 
 function Timer( {hoverTime, setHoverTime, isHovering}) {
-  const UPDATE_TIME = 1
+  const UPDATE_TIME = 20 //Time in MS between 1s intervals
 
   useEffect(() => {
     if(!isHovering) { return }
