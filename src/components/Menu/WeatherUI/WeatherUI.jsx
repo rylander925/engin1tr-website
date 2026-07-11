@@ -4,12 +4,15 @@ import './WeatherUI.css'
 
 function WeatherUI() {
   const [zipCode, setZipCode] = useState("")
+  const [locationName, setLocationName] = useState("")
   const dispatch = useConditionsDispatch()
   
   const handleButton = async () => {
     const cleanZip = zipCode.trim()
     if (!cleanZip || cleanZip.length != 5 || isNaN(cleanZip)) {
-      console.log("ZIP code empty or invalid")
+      const errMsg = "ZIP code empty or invalid"
+      setLocationName(errMsg)
+      console.log(errMsg)
       return
     }
 
@@ -25,7 +28,7 @@ function WeatherUI() {
       if (!location) {
         throw new Error("No location found at ZIP")
       }
-      const {latitude, longitude} = location
+      const {latitude, longitude, name} = location
       
       const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=precipitation,wind_speed_10m,cloud_cover&timezone=auto`
       const weatherRes = await fetch(weatherURL)
@@ -39,9 +42,11 @@ function WeatherUI() {
         throw new Error("No weather found at location")
       }
 
+      setLocationName(name)
       dispatch({type: 'update-weather', weather: currentWeather})
     }
     catch (e) {
+      setLocationName(e.message)
       console.log(e.message)
     }
   }
@@ -56,6 +61,7 @@ function WeatherUI() {
           onChange={e => setZipCode(e.target.value)}
         />
         <button onClick={handleButton}>Confirm</button>
+        <p>{locationName}</p>
       </div>
     </>
   )

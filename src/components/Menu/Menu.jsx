@@ -9,11 +9,9 @@ function Menu() {
     <>
       <div className='menu-container'>
         <button className='menu-button' onClick={() => setIsOpen((prev) => !prev)}>⚙️</button>
-        {isOpen && 
-          <div className='menu-list'>
-            <WeatherUI />
-          </div>
-        }
+        <div className='menu-list' style={{display: isOpen ? 'block' : 'none'}}>
+          <WeatherUI />
+        </div>
       </div>
     </>
   )
