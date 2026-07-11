@@ -196,7 +196,6 @@ export default function Garden() {
                 />
             )}
             <Grass />
-            garden{gusting ? '-gusting' : ''}
         </div>
     );
 }
