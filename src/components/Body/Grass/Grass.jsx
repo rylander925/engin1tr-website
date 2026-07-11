@@ -1,11 +1,18 @@
 import { useState } from 'react'
-import './Grass.css'
+import './Garden.css'
+import grassImg from '../../../assets/plants/grass1.svg'
+import { useConditionsDispatch } from '../../../ConditionsContext.jsx'
 
-function Grass() {
+function Grass( {onHoverChange} ) {
+  const dispatch = useConditionsDispatch();
   return (
-    <section id="center">
-      <div>grass</div>
-    </section>
+    <img 
+      src={grassImg} 
+      className="maingrass" 
+      alt="Grass Image" 
+      onMouseEnter={() => dispatch({type:'set-hovering'})}
+      onMouseLeave={() => dispatch({type:'unset-hovering'})}
+    />
   )
 }
 
