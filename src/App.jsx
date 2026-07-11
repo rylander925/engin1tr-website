@@ -8,6 +8,7 @@ import { ConditionsProvider, useConditions, useConditionsDispatch }  from './Con
 import './App.css'
 
 function App() {
+  const conditions = useConditions()
   return (
     <>
       <ConditionsProvider>

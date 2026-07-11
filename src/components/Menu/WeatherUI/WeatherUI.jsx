@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { useConditionsDispatch } from '../../../ConditionsContext'
 import './WeatherUI.css'
 
 function WeatherUI() {
   const [zipCode, setZipCode] = useState("")
-  const [weather, setWeather] = useState(null)
+  const dispatch = useConditionsDispatch()
   
   const handleButton = async () => {
     const cleanZip = zipCode.trim()
@@ -38,18 +39,7 @@ function WeatherUI() {
         throw new Error("No weather found at location")
       }
 
-      const {
-        precipitation = 0,
-        wind_speed_10m = 0,
-        cloud_cover = 0,
-        time = ""
-      } = currentWeather
-      setWeather({
-        isRaining: precipitation > 0,
-        isWindy: wind_speed_10m > 20,
-        isCloudy: cloud_cover > 50,
-        date: time
-      })
+      dispatch({type: 'update-weather', weather: currentWeather})
     }
     catch (e) {
       console.log(e.message)
