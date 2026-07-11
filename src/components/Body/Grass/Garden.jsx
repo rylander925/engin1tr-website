@@ -138,7 +138,7 @@ function Plant( {plant, index} ) {
                         // render revealed -- no replaying growth on every reload.
                         clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
                         animation: stillGrowing ?
-                             `growReveal ${GROW_DURATION/conditions.speed}s ease-out ${1}s both`
+                             `growReveal ${GROW_DURATION/conditions.speed}s both`
                              : undefined,
                     }}
                 />
