@@ -1,4 +1,4 @@
-import NextSteps from './components/Menu/NextSteps.jsx'
+import { useState } from 'react'
 import Grass from './components/Body/Grass/Grass.jsx'
 import Garden from './components/Body/Grass/Garden.jsx'
 import Background from './components/Body/Background/Background.jsx'
