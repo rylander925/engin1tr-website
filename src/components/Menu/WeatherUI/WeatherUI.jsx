@@ -26,7 +26,7 @@ function WeatherUI() {
       }
       const {latitude, longitude} = location
       
-      const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=precipitation,wind_speed_10m,cloud_cover,is_day`
+      const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=precipitation,wind_speed_10m,cloud_cover&timezone=auto`
       const weatherRes = await fetch(weatherURL)
       if (!weatherRes.ok) {
         throw new Error("Failed to fetch weather data")
@@ -42,13 +42,13 @@ function WeatherUI() {
         precipitation = 0,
         wind_speed_10m = 0,
         cloud_cover = 0,
-        is_day = 1
+        time = ""
       } = currentWeather
       setWeather({
         isRaining: precipitation > 0,
         isWindy: wind_speed_10m > 20,
         isCloudy: cloud_cover > 50,
-        isDay: is_day == 1
+        date: time
       })
     }
     catch (e) {
