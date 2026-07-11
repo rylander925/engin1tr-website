@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import './Background.css'
 
-function Background() {
+function Background({children}) {
   return (
     <section id="center">
-      <div>Background</div>
+      {children}
     </section>
   )
 }
