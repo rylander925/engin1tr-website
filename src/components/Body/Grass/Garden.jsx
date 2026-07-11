@@ -55,8 +55,6 @@ function indexForTime(elapsedTime) {
     return Math.max(0, Math.floor(solution))
 }
 
-console.log("Time", timeForIndex(2), "Index", (indexForTime(timeForIndex(1))));
-
 //generate blade data
     //TODO: Add support for different plant types e.g. type prop
 function generateBlade(seed, index) {
