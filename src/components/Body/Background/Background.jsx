@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useConditions } from '../../../ConditionsContext'
-import Clouds from './Clouds'
+import Clouds from './SkyProps/Clouds'
 import './Background.css'
 
 function Background({children}) {
