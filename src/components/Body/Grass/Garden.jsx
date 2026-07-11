@@ -13,7 +13,7 @@ const VARIANTS = [grass1, grass2, grass3, grass4]
 
 //Plant gen controls
 const BASE_INTERVAL = 1        //generate blade every 10 seconds
-const SLOWDOWN_FACTOR = 2     //larger factor slows down growth as # of blades increases
+const SLOWDOWN_FACTOR = 0.5     //larger factor slows down growth as # of blades increases
 const SPREAD_RATE = 2       // Determines how x pos spread of plants changes with # of plants
 const HEIGHT_AVERAGE = 150  // Average plant height
 const HEIGHT_RANGE = 150     // Total plant height range around average

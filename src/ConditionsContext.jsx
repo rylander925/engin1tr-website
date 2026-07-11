@@ -4,7 +4,7 @@ const initialConditions = {
     elapsedTime: 0,
     isHovering: false,
     seed: 1,
-    speed: 50
+    speed: 100
 };
 
 const ConditionsContext = createContext(null);

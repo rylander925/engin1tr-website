@@ -11,13 +11,13 @@ function App() {
   return (
     <>
       <ConditionsProvider>
-        <Background />
-        <WeatherUI />
-        <Timer/>
-
-        <div className="ticks"></div>
-        <section id="spacer"></section>
+        <Background className = 'background'>
+          <div className = 'menu'>
+            <WeatherUI />
+            <Timer/>
+          </div>
           <Garden />
+        </Background>
       </ConditionsProvider>
     </>
   )
