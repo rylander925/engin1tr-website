@@ -16,11 +16,11 @@ function formatElapsed(totalSeconds) {
 function Timer() {
   const conditions = useConditions();
   const dispatch = useConditionsDispatch();
-  const UPDATE_TIME = 1000 //Time in MS between 1s intervals
+  const updateTime = 1000/conditions.speed //Time in MS between 1s intervals
 
   useEffect(() => {
     if(!conditions.isHovering) { return }
-    const intervalId = setInterval(() => {dispatch({ type: 'increment-time' })}, UPDATE_TIME)
+    const intervalId = setInterval(() => {dispatch({ type: 'increment-time' })}, updateTime)
     return () => clearInterval(intervalId)
   }, [conditions.isHovering])
 

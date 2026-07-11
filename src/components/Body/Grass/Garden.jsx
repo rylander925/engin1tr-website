@@ -4,24 +4,23 @@ import grass1 from '../../../assets/plants/grass1.svg'
 import grass2 from '../../../assets/plants/grass2.svg'
 import grass3 from '../../../assets/plants/grass3.svg'
 import grass4 from '../../../assets/plants/grass4.svg'
+import Grass from './Grass'
 import './Garden.css'
 import { useConditions } from '../../../ConditionsContext'
 const images = import.meta.glob('../../../assets/plants/*.svg')
 
-const BASE_INTERVAL = 5        //generate blade every 10 seconds
-const SLOWDOWN_FACTOR = 1     //larger factor slows down growth as # of blades increases
-
-const VARIANT_NAMES = ['grass1', 'grass2', 'grass3', 'grass4']
-
 const VARIANTS = [grass1, grass2, grass3, grass4]
 
-const SPREAD_RATE = 1       // Determines how x pos spread of plants changes with # of plants
+//Plant gen controls
+const BASE_INTERVAL = 1        //generate blade every 10 seconds
+const SLOWDOWN_FACTOR = 2     //larger factor slows down growth as # of blades increases
+const SPREAD_RATE = 2       // Determines how x pos spread of plants changes with # of plants
 const HEIGHT_AVERAGE = 150  // Average plant height
 const HEIGHT_RANGE = 150     // Total plant height range around average
 const LEAN_RANGE = 30       // Range of plant rotation in degrees (around vertical)
 const HUE_SHIFT_RANGE = 40  // Range in hue shift about unchanged image 
 
-//AI-ZONE: Animation controls
+//Animation controls
 const GROW_DURATION = 5        // seconds -- how long the entrance animation takes
 const SWAY_DURATION_BASE = 3   // seconds -- fastest possible sway cycle
 const SWAY_DURATION_RANGE = 10  // seconds -- spread added on top of the base, per blade
@@ -57,10 +56,12 @@ function indexForTime(elapsedTime) {
     return Math.max(0, Math.floor(solution))
 }
 
+console.log("Time", timeForIndex(2), "Index", (indexForTime(timeForIndex(1))));
+
 //generate blade data
     //TODO: Add support for different plant types e.g. type prop
-    //TODO: Add support for varied animation e.g. swayDuration prop
 function generateBlade(seed, index) {
+    index = index + 1   //start at one for index instead of 0
     const rand = rngForIndex(seed, index);
     return {
         id: index,
@@ -94,20 +95,20 @@ function gardenAt(elapsedTime, seed = 1) {
     //TODO: Add support for different plant types (not grass)
     //AI-ZONE: Review animation code
     //FIXME: Sway twitching
-function Plant( {plant, index, elapsedTime} ) {
-    const age = elapsedTime - plant.appearTime
-    const stillGrowing = age < GROW_DURATION
+function Plant( {plant, index} ) {
+    const conditions = useConditions();
+    const age = conditions.elapsedTime - plant.appearTime;
+    const stillGrowing = age < GROW_DURATION * conditions.speed;
     return(
         //Position wrapper
         <div className='plant'
             style = {{
                     left: `${plant.x}%`,
-                    bottom: 0,
-                    position: 'absolute',
+                    bottom: '0%',
+                    position: 'absolute'
             }}
-        > {age}
+        >
             <div //AI-ZONE: sway animations
-            
                 className = "plant-sway"
                 style = {{
                     transformOrigin: 'bottom center',
@@ -115,7 +116,6 @@ function Plant( {plant, index, elapsedTime} ) {
                                 ease-in-out ${plant.swayDelay}s infinite`,
                 }}
             >
-
                 <img
                     src = {plant.src}
                     style = {{
@@ -133,9 +133,9 @@ function Plant( {plant, index, elapsedTime} ) {
                         // (already fully grown) skip the animation entirely and just
                         // render revealed -- no replaying growth on every reload.
                         clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
-                        animation: 
-                             `growReveal ${GROW_DURATION - age}s ease-out ${2}s both`
-                            ,
+                        animation: stillGrowing ?
+                             `growReveal ${GROW_DURATION/conditions.speed}s ease-out ${1}s both`
+                             : undefined,
                     }}
                 />
             </div>
@@ -143,6 +143,7 @@ function Plant( {plant, index, elapsedTime} ) {
     )
 }
 //Make garden div
+    //FIXME: Get gust functionality to work properly
 export default function Garden() {
     const conditions = useConditions();
     const plants = useMemo(
@@ -150,29 +151,32 @@ export default function Garden() {
         [conditions.elapsedTime, conditions.seed]
     );
     
+    // AI-ZONE
     // Periodic wind gust: toggling one class on the container lets the CSS
     // (see .garden.gusting .blade-sway in Garden.css) override every blade's
     // sway animation at once, instead of touching each blade in JS.
     const [gusting, setGusting] = useState(false)
     useEffect(() => {
         const interval = setInterval(() => {
-            setGusting(true)
-            setTimeout(() => setGusting(false), GUST_DURATION)
-        }, GUST_INTERVAL)
-        return () => clearInterval(interval)
-    }, [])
+                setGusting(true);
+                setTimeout(() => setGusting(false), GUST_DURATION);
+            }, GUST_INTERVAL);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div
             className={`garden${gusting ? '-gusting' : ''}`}
             style={{position: 'relative'}}
-        >
-            {plants.map((plant, index) => <Plant key = {index} 
-                                                plant={plant} 
-                                                index={index} 
-                                                elapsedTime={conditions.elapsedTime}/>
+        >  
+            {plants.map((plant, index) => 
+                <Plant 
+                    key = {index} 
+                    plant={plant} 
+                    index={index}     
+                />
             )}
-            `garden{gusting ? '-gusting' : ''}`
-    </div>
-  )
+            <Grass />
+        </div>
+    );
 }
