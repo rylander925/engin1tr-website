@@ -43,14 +43,18 @@
  
 @keyframes gust {
   0%   { transform: rotate(0deg); }
-  30%  { transform: rotate(22deg); }
+  30%  { transform: rotate(12deg); }
   60%  { transform: rotate(-8deg); }
   100% { transform: rotate(0deg); }
 }
+
+.plant-sway {
+  animation: sway var(--sway-duration) ease-in-out var(--sway-delay) infinite both;
+}
  
-.garden-gusting .plant-sway {
+.garden-gusting .plant-gust {
   animation-name: gust;
-  animation-duration: 0.9s;
+  animation-duration: var(--gust-duration);
   animation-iteration-count: 1;
   animation-timing-function: ease-in-out;
 }

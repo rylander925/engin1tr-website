@@ -26,7 +26,7 @@ const SWAY_DURATION_RANGE = 10  // seconds -- spread added on top of the base, p
 const SWAY_DELAY_RANGE = 20       // seconds -- randomizes phase so blades don't sync up
 
 const GUST_INTERVAL = 10000 // ms between automatic wind gusts
-const GUST_DURATION = 5000   // ms the gust class stays applied
+const GUST_DURATION = 4000   // ms the gust class stays applied
 
 //TODO: Add support for different plant types
 
@@ -88,13 +88,31 @@ function gardenAt(elapsedTime, seed = 1) {
     return Array.from({ length:count }, (_, i) => generateBlade(seed, i))
 }
 
-//update blade data every second
+function PlantAnimation( {plant, children} ) {
+    return(
+        <div
+            className = 'plant-gust'
+            style = {{ transformOrigin: 'bottom center'}}
+            >
+                <div
+                    className = 'plant-sway'
+                    style = {{
+                        transformOrigin: 'bottom center',
+                        '--sway-duration': `${plant.swayDuration}s`,
+                        '--sway-delay': `${plant.swayDelay}s`,
+                    }}
+                    >
+                    {children}
+                </div>
+        </div>
+    )
+}
 
 //Take blade data to make a blade div
     //TODO: Add support for different plant types (not grass)
     //AI-ZONE: Review animation code
     //FIXME: Sway twitching
-function Plant( {plant, index} ) {
+function Plant( {plant, index, animationClass} ) {
     const conditions = useConditions();
     const dispatch = useConditionsDispatch();
     const age = conditions.elapsedTime - plant.appearTime;
@@ -110,39 +128,32 @@ function Plant( {plant, index} ) {
                     bottom: '0%',
                     position: 'absolute'
             }}
-        >
-            <div //AI-ZONE: sway animations
-                className = "plant-sway"
-                style = {{
-                    transformOrigin: 'bottom center',
-                    animation: `sway ${plant.swayDuration}s 
-                                ease-in-out ${plant.swayDelay}s infinite`,
-                }}
             >
-                <img
-                    className = 'plant'
-                    src = {plant.src}
-                    style = {{
-                        height: plant.height,
-                        display: 'block',
-                        
-                        transformOrigin: 'bottom center',
-                        transform: `scaleX(${plant.flip ? -1 : 1}) 
-                                    rotate(${plant.lean}deg)`,
-                        filter: `hue-rotate(${plant.hue}deg)`,
+            <PlantAnimation plant = {plant}>
+                    <img
+                        className = 'plant'
+                        src = {plant.src}
+                        style = {{
+                            height: plant.height,
+                            display: 'block',
+                            
+                            transformOrigin: 'bottom center',
+                            transform: `scaleX(${plant.flip ? -1 : 1}) 
+                                        rotate(${plant.lean}deg)`,
+                            filter: `hue-rotate(${plant.hue}deg)`,
 
-                         //AI-ZONE: Growth animation
-                        // Growth: clip-path doesn't touch `transform`, so it layers on
-                        // top of the flip/lean above with no conflict. Older blades
-                        // (already fully grown) skip the animation entirely and just
-                        // render revealed -- no replaying growth on every reload.
-                        clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
-                        animation: stillGrowing ?
-                             `growReveal ${GROW_DURATION/conditions.speed}s both`
-                             : undefined,
-                    }}
-                />
-            </div>
+                            //AI-ZONE: Growth animation
+                            // Growth: clip-path doesn't touch `transform`, so it layers on
+                            // top of the flip/lean above with no conflict. Older blades
+                            // (already fully grown) skip the animation entirely and just
+                            // render revealed -- no replaying growth on every reload.
+                            clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
+                            animation: stillGrowing ?
+                                `growReveal ${GROW_DURATION/conditions.speed}s ease-in-out 0s both`
+                                : undefined,
+                        }}
+                    />
+            </PlantAnimation>
         </div>
     )
 }
@@ -168,20 +179,26 @@ export default function Garden() {
             }, GUST_INTERVAL);
         return () => clearInterval(interval);
     }, []);
+    
 
     return (
         <div
             className={`garden${gusting ? '-gusting' : ''}`}
-            style={{position: 'relative'}}
+            style={{
+                position: 'relative',
+                '--gust-duration': `${GUST_DURATION}ms`
+            }}
         >  
             {plants.map((plant, index) => 
                 <Plant 
                     key = {index} 
                     plant={plant} 
-                    index={index}     
+                    index={index}
+                    animationClass = {`${gusting ? 'gust' : 'sway'}`} 
                 />
             )}
             <Grass />
+            garden{gusting ? '-gusting' : ''}
         </div>
     );
 }
