@@ -6,8 +6,7 @@ import grass3 from '../../../assets/plants/grass3.svg'
 import grass4 from '../../../assets/plants/grass4.svg'
 import Grass from './Grass'
 import './Garden.css'
-import { useConditions } from '../../../ConditionsContext'
-const images = import.meta.glob('../../../assets/plants/*.svg')
+import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
 
 const VARIANTS = [grass1, grass2, grass3, grass4]
 
@@ -97,11 +96,15 @@ function gardenAt(elapsedTime, seed = 1) {
     //FIXME: Sway twitching
 function Plant( {plant, index} ) {
     const conditions = useConditions();
+    const dispatch = useConditionsDispatch();
     const age = conditions.elapsedTime - plant.appearTime;
     const stillGrowing = age < GROW_DURATION * conditions.speed;
     return(
         //Position wrapper
-        <div className='plant'
+        <div
+            className = 'plant-bounding-box' //Set outline visible in css to show hitbox
+            onMouseEnter={() => dispatch({type:'set-hovering'})}
+            onMouseLeave={() => dispatch({type:'unset-hovering'})}
             style = {{
                     left: `${plant.x}%`,
                     bottom: '0%',
@@ -117,11 +120,12 @@ function Plant( {plant, index} ) {
                 }}
             >
                 <img
+                    className = 'plant'
                     src = {plant.src}
                     style = {{
                         height: plant.height,
                         display: 'block',
-        
+                        
                         transformOrigin: 'bottom center',
                         transform: `scaleX(${plant.flip ? -1 : 1}) 
                                     rotate(${plant.lean}deg)`,
@@ -146,6 +150,7 @@ function Plant( {plant, index} ) {
     //FIXME: Get gust functionality to work properly
 export default function Garden() {
     const conditions = useConditions();
+    const dispatch = useConditionsDispatch();
     const plants = useMemo(
         () => gardenAt(conditions.elapsedTime, conditions.seed), 
         [conditions.elapsedTime, conditions.seed]
