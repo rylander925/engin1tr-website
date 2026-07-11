@@ -20,7 +20,7 @@ const LEAN_RANGE = 30       // Range of plant rotation in degrees (around vertic
 const HUE_SHIFT_RANGE = 40  // Range in hue shift about unchanged image 
 
 //Animation controls
-const GROW_DURATION = 5        // seconds -- how long the entrance animation takes
+const GROW_DURATION = 10        // seconds -- how long the entrance animation takes
 const SWAY_DURATION_BASE = 3   // seconds -- fastest possible sway cycle
 const SWAY_DURATION_RANGE = 10  // seconds -- spread added on top of the base, per blade
 const SWAY_DELAY_RANGE = 20       // seconds -- randomizes phase so blades don't sync up
