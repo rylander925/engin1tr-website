@@ -1,0 +1,68 @@
+.sky-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  
+  /* Default Fallback Background */
+  background: linear-gradient(
+    to bottom,
+    var(--sky-top, #4a90e2),
+    var(--sky-mid, #87ceeb),
+    var(--sky-bot, #e0f7fa)
+  );
+  
+  /* Smooth crossfade for colors */
+  transition: --sky-top 2s ease, --sky-mid 2s ease, --sky-bot 2s ease;
+}
+
+@property --sky-top { syntax: '<color>'; inherits: false; initial-value: #4a90e2; }
+@property --sky-mid { syntax: '<color>'; inherits: false; initial-value: #87ceeb; }
+@property --sky-bot { syntax: '<color>'; inherits: false; initial-value: #e0f7fa; }
+
+/* 
+  Gradient Variation Matrix:
+  
+Daytime - Clear */
+.sky-container[data-time="day"][data-weather="clear"] {
+  --sky-top: #4a90e2;
+  --sky-mid: #87ceeb;
+  --sky-bot: #e0f7fa;
+}
+
+/* Daytime - Rain/Storm */
+.sky-container[data-time="day"][data-weather="storm"] {
+  --sky-top: #4a5568;
+  --sky-mid: #718096;
+  --sky-bot: #cbd5e0;
+}
+
+/* Nighttime - Clear */
+.sky-container[data-time="night"][data-weather="clear"] {
+  --sky-top: #0b132b;
+  --sky-mid: #1c2541;
+  --sky-bot: #3a506b;
+}
+
+/* Nighttime - Rain/Storm */
+.sky-container[data-time="night"][data-weather="storm"] {
+  --sky-top: #0f172a;
+  --sky-mid: #1e293b;
+  --sky-bot: #475569;
+}
+
+/* Sunset/Sunrise (Sunrise 5-7 AM / Sunset 5-7 PM) - Clear */
+.sky-container[data-time="golden-hour"][data-weather="clear"] {
+  --sky-top: #3b5998;
+  --sky-mid: #ef476f;
+  --sky-bot: #ffd166;
+}
+
+/* Sunset/Sunrise - Storm */
+.sky-container[data-time="golden-hour"][data-weather="storm"] {
+  --sky-top: #2d3748;
+  --sky-mid: #5a6578;
+  --sky-bot: #a0aec0;
+}
