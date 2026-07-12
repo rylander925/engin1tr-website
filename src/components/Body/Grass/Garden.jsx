@@ -5,6 +5,7 @@ import grass2 from '../../../assets/plants/grass2.svg'
 import grass3 from '../../../assets/plants/grass3.svg'
 import grass4 from '../../../assets/plants/grass4.svg'
 import Grass from './Grass'
+import { Generator } from '../Generable' 
 import './Garden.css'
 import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
 
@@ -30,140 +31,106 @@ const GUST_DURATION = 4000   // ms the gust class stays applied
 
 //TODO: Add support for different plant types
 
-//Random number seeder. Well-documented---search 'mulberry32' for details
-function mulberry32(seed) {
-  return function () {
-    seed |= 0; seed = (seed + 0x6D2B79F5) | 0
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  };
-}
-// Returns a seeded RNG for indexed random numbers. RNG returns float between 0 and 1
-// 9781 is a largish odd number to differentiate seeds between array members
-const rngForIndex = (seed, i) => mulberry32(seed + i * 9781)
+class PlantGenerator extends Generator {
+    constructor( baseInterval, slowdownFactor, seed ) {
+        super(baseInterval, slowdownFactor, seed);
+    }
 
-//Return the elapsed time at which nth plant appears
-function timeForIndex(n) {
-    return n * BASE_INTERVAL + SLOWDOWN_FACTOR * (n ** 2)
-}
+    generateItemAttributes(rand, index) {
+        return {
+            id: index,
+            appearTime: this.timeForIndex(index),
+            src: VARIANTS[Math.floor(rand() * VARIANTS.length)],
 
-//Return the number of plants (called index for consistency) at a given elapsed time
-function indexForTime(elapsedTime) {
-    const a = SLOWDOWN_FACTOR, b = BASE_INTERVAL, c = -elapsedTime;
-    const solution = (-b + Math.sqrt(b**2 - 4*a*c)) / (2*a)
-    return Math.max(0, Math.floor(solution))
-}
+            //% range about center governed by index * SPREAD_RATE
+            x: 50 + (rand() - 0.5) * Math.min(index * SPREAD_RATE, 100), 
 
-//generate blade data
-    //TODO: Add support for different plant types e.g. type prop
-function generateBlade(seed, index) {
-    index = index + 1   //start at one for index instead of 0
-    const rand = rngForIndex(seed, index);
-    return {
-        id: index,
-        appearTime: timeForIndex(index),
-        src: VARIANTS[Math.floor(rand() * VARIANTS.length)],
+            height: HEIGHT_AVERAGE + (rand() - 0.5) * HEIGHT_RANGE,
+            flip: rand() < 0.5,
+            lean: (rand() - 0.5) * LEAN_RANGE,
+            hue: (rand() - 0.5) * HUE_SHIFT_RANGE,
 
-        //% range about center governed by index * SPREAD_RATE
-        x: 50 + (rand() - 0.5) * Math.min(index * SPREAD_RATE, 100), 
+            //AI-ZONE: per-blade sway timing
+            //FIXME: Sway twitching
+            swayDuration: SWAY_DURATION_BASE + rand() * SWAY_DURATION_RANGE,
+            swayDelay: rand() * SWAY_DELAY_RANGE,
+        }
+    }
 
-        height: HEIGHT_AVERAGE + (rand() - 0.5) * HEIGHT_RANGE,
-        flip: rand() < 0.5,
-        lean: (rand() - 0.5) * LEAN_RANGE,
-        hue: (rand() - 0.5) * HUE_SHIFT_RANGE,
+    static PlantAnimation( {plant, children} ) {
+        return(
+            <div
+                className = 'plant-gust'
+                style = {{ transformOrigin: 'bottom center'}}
+                >
+                    <div
+                        className = 'plant-sway'
+                        style = {{
+                            transformOrigin: 'bottom center',
+                            '--sway-duration': `${plant.swayDuration}s`,
+                            '--sway-delay': `${plant.swayDelay}s`,
+                        }}
+                        >
+                        {children}
+                    </div>
+            </div>
+        )
+    }
 
-        //AI-ZONE: per-blade sway timing
-        //FIXME: Sway twitching
-        swayDuration: SWAY_DURATION_BASE + rand() * SWAY_DURATION_RANGE,
-        swayDelay: rand() * SWAY_DELAY_RANGE,
+    static Plant( {plant, index} ) {
+        const conditions = useConditions();
+        const dispatch = useConditionsDispatch();
+        const age = conditions.elapsedTime - plant.appearTime;
+        const stillGrowing = age < GROW_DURATION * conditions.speed;
+        return(
+            //Position wrapper
+            <div
+                className = 'plant-bounding-box' //Set outline visible in css to show hitbox
+                onMouseEnter={() => dispatch({type:'set-hovering'})}
+                onMouseLeave={() => dispatch({type:'unset-hovering'})}
+                style = {{
+                        left: `${plant.x}%`,
+                        bottom: '0%',
+                        position: 'absolute'
+                }}
+                >
+                <PlantGenerator.PlantAnimation plant = {plant}>
+                        <img
+                            className = 'plant'
+                            src = {plant.src}
+                            style = {{
+                                height: plant.height,
+                                display: 'block',
+                                
+                                transformOrigin: 'bottom center',
+                                transform: `scaleX(${plant.flip ? -1 : 1}) 
+                                            rotate(${plant.lean}deg)`,
+                                filter: `hue-rotate(${plant.hue}deg)`,
+
+                                //AI-ZONE: Growth animation
+                                // Growth: clip-path doesn't touch `transform`, so it layers on
+                                // top of the flip/lean above with no conflict. Older blades
+                                // (already fully grown) skip the animation entirely and just
+                                // render revealed -- no replaying growth on every reload.
+                                clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
+                                animation: stillGrowing ?
+                                    `growReveal ${GROW_DURATION/conditions.speed}s ease-in-out 0s both`
+                                    : undefined,
+                            }}
+                        />
+                </PlantGenerator.PlantAnimation>
+            </div>
+        )
     }
 }
 
-//generate full garden at elapsedTime
-function gardenAt(elapsedTime, seed = 1) {
-    const count = indexForTime(elapsedTime)
-    return Array.from({ length:count }, (_, i) => generateBlade(seed, i))
-}
-
-function PlantAnimation( {plant, children} ) {
-    return(
-        <div
-            className = 'plant-gust'
-            style = {{ transformOrigin: 'bottom center'}}
-            >
-                <div
-                    className = 'plant-sway'
-                    style = {{
-                        transformOrigin: 'bottom center',
-                        '--sway-duration': `${plant.swayDuration}s`,
-                        '--sway-delay': `${plant.swayDelay}s`,
-                    }}
-                    >
-                    {children}
-                </div>
-        </div>
-    )
-}
-
-//Take blade data to make a blade div
-    //TODO: Add support for different plant types (not grass)
-    //AI-ZONE: Review animation code
-    //FIXME: Sway twitching
-function Plant( {plant, index, animationClass} ) {
-    const conditions = useConditions();
-    const dispatch = useConditionsDispatch();
-    const age = conditions.elapsedTime - plant.appearTime;
-    const stillGrowing = age < GROW_DURATION * conditions.speed;
-    return(
-        //Position wrapper
-        <div
-            className = 'plant-bounding-box' //Set outline visible in css to show hitbox
-            onMouseEnter={() => dispatch({type:'set-hovering'})}
-            onMouseLeave={() => dispatch({type:'unset-hovering'})}
-            style = {{
-                    left: `${plant.x}%`,
-                    bottom: '0%',
-                    position: 'absolute'
-            }}
-            >
-            <PlantAnimation plant = {plant}>
-                    <img
-                        className = 'plant'
-                        src = {plant.src}
-                        style = {{
-                            height: plant.height,
-                            display: 'block',
-                            
-                            transformOrigin: 'bottom center',
-                            transform: `scaleX(${plant.flip ? -1 : 1}) 
-                                        rotate(${plant.lean}deg)`,
-                            filter: `hue-rotate(${plant.hue}deg)`,
-
-                            //AI-ZONE: Growth animation
-                            // Growth: clip-path doesn't touch `transform`, so it layers on
-                            // top of the flip/lean above with no conflict. Older blades
-                            // (already fully grown) skip the animation entirely and just
-                            // render revealed -- no replaying growth on every reload.
-                            clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
-                            animation: stillGrowing ?
-                                `growReveal ${GROW_DURATION/conditions.speed}s ease-in-out 0s both`
-                                : undefined,
-                        }}
-                    />
-            </PlantAnimation>
-        </div>
-    )
-}
 //Make garden div
     //FIXME: Get gust functionality to work properly
 export default function Garden() {
     const conditions = useConditions();
     const dispatch = useConditionsDispatch();
-    const plants = useMemo(
-        () => gardenAt(conditions.elapsedTime, conditions.seed), 
-        [conditions.elapsedTime, conditions.seed]
-    );
+    const plantGenerator = new PlantGenerator(BASE_INTERVAL, SLOWDOWN_FACTOR, conditions.seed);
+    const plants = plantGenerator.useGenerableAtTime(conditions.elapsedTime);
     
     // AI-ZONE
     // Periodic wind gust: toggling one class on the container lets the CSS
@@ -173,7 +140,7 @@ export default function Garden() {
     useEffect(() => {
         const interval = setInterval(() => {
                 setGusting(true);
-                setTimeout(() => setGusting(false), GUST_DURATION);
+                setTimeout(() => setGusting(false), GUST_DURATION * 2); //Multiply by 2 to allow plants growing mid gust to blow. Not a complete fix
             }, GUST_INTERVAL);
         return () => clearInterval(interval);
     }, []);
@@ -183,16 +150,14 @@ export default function Garden() {
         <div
             className={`garden${gusting ? '-gusting' : ''}`}
             style={{
-                position: 'relative',
                 '--gust-duration': `${GUST_DURATION}ms`
             }}
         >  
             {plants.map((plant, index) => 
-                <Plant 
+                <PlantGenerator.Plant
                     key = {index} 
                     plant={plant} 
-                    index={index}
-                    animationClass = {`${gusting ? 'gust' : 'sway'}`} 
+                    index={index} 
                 />
             )}
             <Grass />

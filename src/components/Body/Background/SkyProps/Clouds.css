@@ -1,7 +1,24 @@
 .cloud {
+    position: absolute;
+    left: 0;
+    animation-name: drift;
+    animation-duration: var(--drift-duration);
+    animation-timing-function: linear;
+    animation-delay: var(--drift-delay);
+    animation-iteration-count: infinite;
+    animation-fill-mode: backwards;
+}
+@keyframes drift {
+    from { transform: translateX(-40vw);}
+    to   { transform: translateX(140vw);}
+
+}
+
+
+.cloud-bounding-box {
+    width: 100vw;
+    height: 100vh;
+    inset:0;
+    overflow: hidden;
     position: fixed;
-    top: 1rem;              /* wherever "top" means for your UI */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
 }
