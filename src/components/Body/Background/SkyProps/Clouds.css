@@ -7,6 +7,11 @@
     animation-delay: var(--drift-delay);
     animation-iteration-count: infinite;
     animation-fill-mode: backwards;
+    transition: opacity 2s ease, width 2s ease;
+}
+
+.cloud-image {
+    transition: opacity 2s ease, width 2s ease;
 }
 @keyframes drift {
     from { transform: translateX(-80vw);}
