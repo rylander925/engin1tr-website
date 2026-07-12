@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import grassImg from '../../../assets/grass.png'
 import grass1 from '../../../assets/plants/grass1.svg'
 import grass2 from '../../../assets/plants/grass2.svg'
 import grass3 from '../../../assets/plants/grass3.svg'
 import grass4 from '../../../assets/plants/grass4.svg'
 import Grass from './Grass'
-import { Generator } from '../Generable' 
+import { Generator } from './Generable' 
 import './Garden.css'
 import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
 

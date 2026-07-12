@@ -1,10 +1,9 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import cloud1 from '../../../../assets/clouds/cloud1.svg'
 import cloud2 from '../../../../assets/clouds/cloud2.svg'
 import cloud3 from '../../../../assets/clouds/cloud3.svg'
 import cloud4 from '../../../../assets/clouds/cloud4.svg'
-import { Generator } from '../../Generable' 
-import { useConditions, useConditionsDispatch } from '../../../../ConditionsContext'
+import { useConditions } from '../../../../ConditionsContext'
 import './Clouds.css'
 
 const VARIANTS = [cloud1, cloud2, cloud3, cloud4]
