@@ -4,14 +4,14 @@ const HEAVY_RAIN = 10; //10mm of rain per hour
 const HEAVY_WIND = 50; //50km per hour
 
 const initialConditions = {
-    elapsedTime: 0,       //Set default to another value to pregenerate grass
+    elapsedTime: 1800,       //Set default to another value to pregenerate grass
     isHovering: false,
     seed: 1,              //PRNG is seeded; this can be any number, determines plant generation
-    speed: 1,           //Factor to speed up time speed 1 -> 1s real = 1s simulated
+    speed: 10,           //Factor to speed up time speed 1 -> 1s real = 1s simulated
     weather: { 
         zipcode: 0,
         precipitation: 0, //fraction: 1=heavy, 0=none (>1 = extreme)
-        windSpeed: 1,     //fraction: ^
+        windSpeed: 0.5,     //fraction: ^
         cloudCover: 0.5,    //fraction: ^
         date: '',         //YYYY-MM-DD
         hour: 0           //Decimal number: 12:30PM would be represented as 12.5

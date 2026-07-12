@@ -17,7 +17,7 @@ const LEAN_RANGE = 20       // Range of cloud rotation in degrees (around vertic
 const HUE_SHIFT_RANGE = 40  // Range in hue shift about unchanged image 
 
 //Animation controls
-const BASE_DRIFT_DURATION = 25      //How long each cloud is on screen; actual reduced by windSpeed
+const BASE_DRIFT_DURATION = 50      //How long each cloud is on screen; actual reduced by windSpeed
 const MAX_WIND_SPEED = 3            //Divides base duration; multiplied by wind speed factor
 const MAX_CLOUDS = 70               //Clouds when cloud cover is 100%
 
