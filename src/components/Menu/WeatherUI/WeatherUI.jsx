@@ -39,6 +39,7 @@ function WeatherUI() {
         throw new Error("No weather found at location")
       }
 
+      console.log(JSON.stringify(currentWeather))
       dispatch({type: 'update-weather', weather: currentWeather})
     }
     catch (e) {

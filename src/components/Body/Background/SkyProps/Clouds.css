@@ -9,8 +9,8 @@
     animation-fill-mode: backwards;
 }
 @keyframes drift {
-    from { transform: translateX(-40vw);}
-    to   { transform: translateX(140vw);}
+    from { transform: translateX(-80vw);}
+    to   { transform: translateX(180vw);}
 
 }
 

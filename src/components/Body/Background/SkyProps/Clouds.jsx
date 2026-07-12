@@ -12,14 +12,14 @@ const VARIANTS = [cloud1, cloud2, cloud3, cloud4]
 //cloud gen controls
 const HEIGHT_AVERAGE = 150  // Average cloud height
 const HEIGHT_RANGE = 150     // Total cloud height range around average
-const Y_RANGE = 20          // Range in y values from top as a percent
+const Y_RANGE = 30          // Range in y values from top as a percent
 const LEAN_RANGE = 20       // Range of cloud rotation in degrees (around vertical)
 const HUE_SHIFT_RANGE = 40  // Range in hue shift about unchanged image 
 
 //Animation controls
 const BASE_DRIFT_DURATION = 25      //How long each cloud is on screen; actual reduced by windSpeed
 const MAX_WIND_SPEED = 3            //Divides base duration; multiplied by wind speed factor
-const MAX_CLOUDS = 30               //Clouds when cloud cover is 100%
+const MAX_CLOUDS = 70               //Clouds when cloud cover is 100%
 
 const GUST_INTERVAL = 10000 // ms between automatic wind gusts
 const GUST_DURATION = 4000   // ms the gust class stays applied
@@ -48,7 +48,7 @@ class CloudGenerator extends Generator {
         }
     }
 
-    static Cloud( {cloud, index, driftDuration, visible, rerollCloud} ) {
+    static Cloud( {cloud, index, cloudCover, driftDuration, visible, rerollCloud} ) {
         return(
             //Position wrapper
             <div
@@ -67,11 +67,12 @@ class CloudGenerator extends Generator {
                     <img
                         src = {cloud.src}
                         style = {{
-                            height: cloud.height,
+                            height: cloud.height * (cloudCover + 1),
                             display: 'block',
                             
                             transformOrigin: 'bottom center',
                             transform: `scaleX(${cloud.flip ? -1 : 1}) 
+                                        translateY(-50%)
                                         rotate(${cloud.lean}deg)`,
                             filter: `hue-rotate(${cloud.hue}deg)`,
                         }}
@@ -125,7 +126,7 @@ export default function Clouds() {
         >
             {
                 clouds.map((cloud, index) => 
-                <CloudGenerator.Cloud key={`${index}-${cloud.version}`} cloud={cloud} visible={index < visibleClouds} driftDuration={driftDuration} elapsedTime={conditions.elapsedTime} index={index} rerollCloud={rerollCloud}/>)
+                <CloudGenerator.Cloud key={`${index}-${cloud.version}`} cloud={cloud} cloudCover={conditions.weather.cloudCover} visible={index < visibleClouds} driftDuration={driftDuration} elapsedTime={conditions.elapsedTime} index={index} rerollCloud={rerollCloud}/>)
             }
         </div>
     );

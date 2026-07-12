@@ -12,7 +12,7 @@ const initialConditions = {
         zipcode: 0,
         precipitation: 0, //fraction: 1=heavy, 0=none (>1 = extreme)
         windSpeed: 1,     //fraction: ^
-        cloudCover: 1,    //fraction: ^
+        cloudCover: 0.5,    //fraction: ^
         date: '',         //YYYY-MM-DD
         hour: 0           //Decimal number: 12:30PM would be represented as 12.5
     }
@@ -58,6 +58,7 @@ function conditionsReducer(conditions, action) {
             return {...conditions, isHovering: false}
         }
         case 'update-weather': {
+            console.log(JSON.stringify(conditions.weather))
             const [date, timeString] = action.weather.time.split('T')
             let [hour, minute] = timeString.split(':')
             hour = Number(hour) + Number(minute)/60
