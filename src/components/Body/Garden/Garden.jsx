@@ -28,6 +28,9 @@ const SWAY_DELAY_RANGE = 20       // seconds -- randomizes phase so blades don't
 const GUST_INTERVAL = 7000         // average ms between automatic wind gusts
 const GUST_INTERVAL_RANGE = 6000
 const BASE_GUST_DURATION = 4000          // ms the gust class stays applied
+const WIND_INTENSITY_FACTOR = 3
+const MIN_GUST_INTENSITY = 0.5
+const MIN_SWAY_INTENSITY = 1
 
 //TODO: Add support for different plant types
 
@@ -51,7 +54,7 @@ class PlantGenerator extends Generator {
             lean: (rand() - 0.5) * LEAN_RANGE,
             hue: (rand() - 0.5) * HUE_SHIFT_RANGE,
 
-            gustDelay: 0.5 * x/100,
+            gustDelay: 0.7 * x/100,
             swayDuration: SWAY_DURATION_BASE + rand() * SWAY_DURATION_RANGE,
             swayDelay: rand() * SWAY_DELAY_RANGE,
         }
@@ -132,8 +135,8 @@ export default function Garden() {
     const plantGenerator = new PlantGenerator(BASE_INTERVAL, SLOWDOWN_FACTOR, conditions.seed);
     const plants = plantGenerator.useGenerableAtTime(conditions.elapsedTime);
 
-    const gustIntensity = 0.5 + weather.windSpeed * 3
-    const swayIntensity = 1 + weather.windSpeed * 3
+    const gustIntensity = MIN_GUST_INTENSITY + weather.windSpeed * WIND_INTENSITY_FACTOR
+    const swayIntensity = MIN_SWAY_INTENSITY + weather.windSpeed * WIND_INTENSITY_FACTOR
     const [gustVariation, setGustVariation] = useState(0.5)
     
     // Periodic wind gust: change css class to switch between animations
