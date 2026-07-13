@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import Grass from './components/Body/Grass/Grass.jsx'
-import Garden from './components/Body/Grass/Garden.jsx'
+import Grass from './components/Body/Garden/Grass.jsx'
+import Garden from './components/Body/Garden/Garden.jsx'
 import Background from './components/Body/Background/Background.jsx'
 import WeatherUI from './components/Menu/WeatherUI/WeatherUI.jsx'
 import Timer from './components/Menu/Timer/Timer.jsx'
+import Clouds from './components/Body/SkyProps/Clouds.jsx'
 import { ConditionsProvider, useConditions, useConditionsDispatch }  from './ConditionsContext.jsx'
 import './App.css'
 
@@ -16,6 +17,7 @@ function App() {
             <WeatherUI />
             <Timer/>
           </div>
+          <Clouds />
           <Garden />
         </Background>
       </ConditionsProvider>

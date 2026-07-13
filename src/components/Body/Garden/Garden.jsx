@@ -144,7 +144,6 @@ export default function Garden() {
             }, GUST_INTERVAL);
         return () => clearInterval(interval);
     }, []);
-    
 
     return (
         <div
