@@ -132,10 +132,7 @@ export default function Garden() {
     const plantGenerator = new PlantGenerator(BASE_INTERVAL, SLOWDOWN_FACTOR, conditions.seed);
     const plants = plantGenerator.useGenerableAtTime(conditions.elapsedTime);
     
-    // AI-ZONE
-    // Periodic wind gust: toggling one class on the container lets the CSS
-    // (see .garden.gusting .blade-sway in Garden.css) override every blade's
-    // sway animation at once, instead of touching each blade in JS.
+    // Periodic wind gust: change css class to switch between animations
     const [gusting, setGusting] = useState(false)
     useEffect(() => {
         const interval = setInterval(() => {

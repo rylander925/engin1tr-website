@@ -16,6 +16,7 @@ const MIN_CLOUD_COVER_SCALE = 0.1   // Minimum cloud scaling when cloud cover is
 const Y_RANGE = 100                 // Range in y values from top as a percent
 const LEAN_RANGE = 30               // Range of cloud rotation in degrees (around vertical)
 const HUE_SHIFT_RANGE = 40          // Range in hue shift about unchanged image 
+const OPACITY_RANGE = 0.3           // Range of random decrease in opacity
 
 //Cloud elevation controls
 const ELEVATION_DURATION_FACTOR = 2         //Increases cloud speed to tune the decrease in duration from closeness
@@ -68,7 +69,7 @@ function Cloud( {cloud, index, cloudCover, driftDuration, visible, rerollCloud} 
                         filter: `hue-rotate(${cloud.hue}deg) 
                                 saturate(${linear(cloud.closenessFactor, HORIZON_SATURATION)}) 
                                 brightness(${1 + (1-cloud.closenessFactor)*HORIZON_BRIGHTNESS_INCREASE})`,
-                        opacity: visible ? linear(cloud.closenessFactor, HORIZON_OPACITY) : 0,
+                        opacity: visible ? cloud.opacity * linear(cloud.closenessFactor, HORIZON_OPACITY) : 0,
                     }}
                 />
         </div>
@@ -83,18 +84,23 @@ function generateCloud(index, prepopulateSky = false) {
             id: index,
             version: 0,
             src: VARIANTS[Math.floor(Math.random() * VARIANTS.length)],
-
+            
+            //If prepoulate sky is set, forces clouds to prepulate screen
             delay: Math.random() * (prepopulateSky ? -1 : 1),
-            driftFactor: 1 + (Math.random() - 0.5) * DURATION_FACTOR_RANGE,
+            
+            //Elevation dependent generation
             y: y,
+            driftFactor: 1 + (Math.random() - 0.5) * DURATION_FACTOR_RANGE,
             closenessFactor: closenessFactor,
             scaleY: linear(closenessFactor, ELEVATION_HEIGHT_MIN),
             scaleX: linear(closenessFactor, ELEVATION_WIDTH_MIN),
 
+            //Cloud variation
             width: WIDTH_AVERAGE + (Math.random() - 0.5) * WIDTH_RANGE,
             flip: Math.random() < 0.5,
             lean: (Math.random() - 0.5) * LEAN_RANGE,
             hue: (Math.random() - 0.5) * HUE_SHIFT_RANGE,
+            opacity: 1 - (Math.random() * OPACITY_RANGE),
         }
 }
 
