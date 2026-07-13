@@ -1,6 +1,6 @@
 .background {
   position: fixed;
-  inset: 0;              /* shorthand for top/right/bottom/left: 0 */
+  inset: 0;            
   z-index: 0;
   width: 100vh;
   height: 100vh;
@@ -8,7 +8,7 @@
 
 .UI {
   position: fixed;
-  top: 1rem;              /* wherever "top" means for your UI */
+  top: 1rem;             
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;

@@ -25,9 +25,8 @@ function Timer() {
   }, [conditions.isHovering])
 
   return (
-    <section id="center">
-      <div>You've been touching grass for {formatElapsed(conditions.elapsedTime)}</div>
-    </section>
+
+      <div className='counter'>You've been touching grass for {formatElapsed(conditions.elapsedTime)}</div>
   )
 }
 
