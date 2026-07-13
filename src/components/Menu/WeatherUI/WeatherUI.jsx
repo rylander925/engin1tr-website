@@ -1,17 +1,15 @@
-import { useState } from 'react'
-import { useConditionsDispatch } from '../../../ConditionsContext'
+import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
 import './WeatherUI.css'
 
 function WeatherUI() {
-  const [zipCode, setZipCode] = useState("")
-  const [locationName, setLocationName] = useState("")
   const dispatch = useConditionsDispatch()
+  const conditions = useConditions()
   
   const handleButton = async () => {
-    const cleanZip = zipCode.trim()
+    const cleanZip = conditions.zipCode.trim()
     if (!cleanZip || cleanZip.length != 5 || isNaN(cleanZip)) {
       const errMsg = "ZIP code empty or invalid"
-      setLocationName(errMsg)
+      dispatch({type: 'update-locationName', locationName: errMsg})
       console.log(errMsg)
       return
     }
@@ -42,26 +40,62 @@ function WeatherUI() {
         throw new Error("No weather found at location")
       }
 
-      setLocationName(name)
+      dispatch({type: 'update-locationName', locationName: name})
       dispatch({type: 'update-weather', weather: currentWeather})
     }
     catch (e) {
-      setLocationName(e.message)
+      dispatch({type: 'update-locationName', locationName: e.message})
       console.log(e.message)
     }
+  }
+
+  const handleSlider = (field, value) => {
+    dispatch({type: 'update-weather-field', field: field, value: parseFloat(value)})
+  }
+
+  const formatPercent = (value) => {
+    return (value * 100).toFixed(0) + "%"
   }
 
   return (
     <>
       <div className='weather-container'>
+        <label>Location:</label>
         <input
           type='text'
           placeholder='Enter ZIP code'
-          value={zipCode}
-          onChange={e => setZipCode(e.target.value)}
+          value={conditions.zipCode}
+          onChange={e => dispatch({type: 'update-zipCode', zipCode: e.target.value})}
         />
+        <div style={{height: '0.3rem'}} />
         <button onClick={handleButton}>Confirm</button>
-        <p>{locationName}</p>
+        <label>{conditions.locationName}</label>
+
+        <hr></hr>
+
+        <label>Rain: {formatPercent(conditions.weather.precipitation)}</label>
+        <input type="range" min="0" max="1" step="0.05"
+          value={conditions.weather.precipitation}
+          onChange={e => handleSlider('precipitation', e.target.value)}
+        />
+
+        <label>Wind: {formatPercent(conditions.weather.windSpeed)}</label>
+        <input type="range" min="0" max="1" step="0.05"
+          value={conditions.weather.windSpeed}
+          onChange={e => handleSlider('windSpeed', e.target.value)}
+        />
+
+        <label>Clouds: {formatPercent(conditions.weather.cloudCover)}</label>
+        <input type="range" min="0" max="1" step="0.05"
+          value={conditions.weather.cloudCover}
+          onChange={e => handleSlider('cloudCover', e.target.value)}
+        />
+
+        <label>Hour: {conditions.weather.hour}</label>
+        <input type="range" min="0" max="24" step="0.5"
+          value={conditions.weather.hour}
+          onChange={e => handleSlider('hour', e.target.value)}
+        />
       </div>
     </>
   )
