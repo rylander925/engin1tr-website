@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Grass from './components/Body/Garden/Grass.jsx'
 import Garden from './components/Body/Garden/Garden.jsx'
 import Background from './components/Body/Background/Background.jsx'
 import Menu from './components/Menu/Menu.jsx'

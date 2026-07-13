@@ -4,7 +4,6 @@ import grass1 from '../../../assets/plants/grass1.svg'
 import grass2 from '../../../assets/plants/grass2.svg'
 import grass3 from '../../../assets/plants/grass3.svg'
 import grass4 from '../../../assets/plants/grass4.svg'
-import Grass from './Grass'
 import { Generator } from './Generable' 
 import './Garden.css'
 import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
@@ -26,8 +25,9 @@ const SWAY_DURATION_BASE = 3   // seconds -- fastest possible sway cycle
 const SWAY_DURATION_RANGE = 10  // seconds -- spread added on top of the base, per blade
 const SWAY_DELAY_RANGE = 20       // seconds -- randomizes phase so blades don't sync up
 
-const GUST_INTERVAL = 10000 // ms between automatic wind gusts
-const GUST_DURATION = 4000   // ms the gust class stays applied
+const GUST_INTERVAL = 7000         // average ms between automatic wind gusts
+const GUST_INTERVAL_RANGE = 6000
+const BASE_GUST_DURATION = 4000          // ms the gust class stays applied
 
 //TODO: Add support for different plant types
 
@@ -37,21 +37,21 @@ class PlantGenerator extends Generator {
     }
 
     generateItemAttributes(rand, index) {
+        const x = 50 + (rand() - 0.5) * Math.min(index * SPREAD_RATE, 100); 
         return {
             id: index,
             appearTime: this.timeForIndex(index),
             src: VARIANTS[Math.floor(rand() * VARIANTS.length)],
 
             //% range about center governed by index * SPREAD_RATE
-            x: 50 + (rand() - 0.5) * Math.min(index * SPREAD_RATE, 100), 
+            x: x, 
 
             height: HEIGHT_AVERAGE + (rand() - 0.5) * HEIGHT_RANGE,
             flip: rand() < 0.5,
             lean: (rand() - 0.5) * LEAN_RANGE,
             hue: (rand() - 0.5) * HUE_SHIFT_RANGE,
 
-            //AI-ZONE: per-blade sway timing
-            //FIXME: Sway twitching
+            gustDelay: 0.5 * x/100,
             swayDuration: SWAY_DURATION_BASE + rand() * SWAY_DURATION_RANGE,
             swayDelay: rand() * SWAY_DELAY_RANGE,
         }
@@ -61,7 +61,9 @@ class PlantGenerator extends Generator {
         return(
             <div
                 className = 'plant-gust'
-                style = {{ transformOrigin: 'bottom center'}}
+                style = {{ transformOrigin: 'bottom center',
+                            '--gust-delay': `${plant.gustDelay}s`
+                }}
                 >
                     <div
                         className = 'plant-sway'
@@ -107,11 +109,8 @@ class PlantGenerator extends Generator {
                                             rotate(${plant.lean}deg)`,
                                 filter: `hue-rotate(${plant.hue}deg)`,
 
-                                //AI-ZONE: Growth animation
-                                // Growth: clip-path doesn't touch `transform`, so it layers on
-                                // top of the flip/lean above with no conflict. Older blades
-                                // (already fully grown) skip the animation entirely and just
-                                // render revealed -- no replaying growth on every reload.
+                                //Growth animation
+                                //if elapsedTime is set past age, don't show animation
                                 clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
                                 animation: stillGrowing ?
                                     `growReveal ${GROW_DURATION/conditions.speed}s ease-in-out 0s both`
@@ -128,25 +127,40 @@ class PlantGenerator extends Generator {
     //FIXME: Get gust functionality to work properly
 export default function Garden() {
     const conditions = useConditions();
+    const weather = conditions.weather
     const dispatch = useConditionsDispatch();
     const plantGenerator = new PlantGenerator(BASE_INTERVAL, SLOWDOWN_FACTOR, conditions.seed);
     const plants = plantGenerator.useGenerableAtTime(conditions.elapsedTime);
+
+    const gustIntensity = 0.5 + weather.windSpeed * 3
+    const swayIntensity = 1 + weather.windSpeed * 3
+    const [gustVariation, setGustVariation] = useState(0.5)
     
     // Periodic wind gust: change css class to switch between animations
     const [gusting, setGusting] = useState(false)
     useEffect(() => {
-        const interval = setInterval(() => {
+        let gustTimeout;
+        const scheduleGust = () => {
+            setGustVariation(Math.random())
+            const gustInterval = BASE_GUST_DURATION * 2 + (GUST_INTERVAL + GUST_INTERVAL_RANGE * (Math.random() - 0.5))/gustIntensity;
+            gustTimeout = setTimeout(() => {
                 setGusting(true);
-                setTimeout(() => setGusting(false), GUST_DURATION * 2); //Multiply by 2 to allow plants growing mid gust to blow. Not a complete fix
-            }, GUST_INTERVAL);
-        return () => clearInterval(interval);
+                setTimeout(() => setGusting(false), BASE_GUST_DURATION * 2); //Multiply by 2 to allow plants growing mid gust to blow. Not a complete fix
+                scheduleGust();
+            }, gustInterval);
+        };
+
+        scheduleGust();
+        return () => clearTimeout(gustTimeout);
     }, []);
 
     return (
         <div
             className={`garden${gusting ? '-gusting' : ''}`}
             style={{
-                '--gust-duration': `${GUST_DURATION}ms`
+                '--gust-duration': `${BASE_GUST_DURATION}ms`,
+                '--gust-intensity': gustIntensity * gustVariation,
+                '--sway-intensity': swayIntensity,
             }}
         >  
             {plants.map((plant, index) => 
@@ -156,7 +170,11 @@ export default function Garden() {
                     index={index} 
                 />
             )}
-            <Grass />
+            <PlantGenerator.Plant
+                key = '-1'
+                plant = {plantGenerator.generateItem(-1)}
+                index = {-1}
+            />
         </div>
     );
 }

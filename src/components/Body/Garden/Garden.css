@@ -31,8 +31,8 @@
 /* --- Ambient wind --- */
  
 @keyframes sway {
-  0%, 100% { transform: rotate(-1deg); }
-  50%      { transform: rotate(1deg); }
+  0%, 100% { transform: rotate(calc(var(--sway-intensity) * -1deg)); }
+  50%      { transform: rotate(calc(var(--sway-intensity) * 2deg)); }
 }
  
 /* --- Gust --- */
@@ -43,18 +43,24 @@
  
 @keyframes gust {
   0%   { transform: rotate(0deg); }
-  30%  { transform: rotate(12deg); }
-  60%  { transform: rotate(-8deg); }
+  30%  { transform: rotate(calc(var(--gust-intensity) * 12deg)); }
+  60%  { transform: rotate(calc(var(--gust-intensity) * -8deg)); }
   100% { transform: rotate(0deg); }
 }
 
 .plant-sway {
-  animation: sway var(--sway-duration) ease-in-out var(--sway-delay) infinite both;
+  animation-name: sway;
+  animation-duration: calc(1s + calc(var(--sway-duration)/var(--sway-intensity)));
+  animation-timing-function: ease-in-out;
+  animation-delay: var(--sway-delay);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
  
 .garden-gusting .plant-gust {
   animation-name: gust;
   animation-duration: var(--gust-duration);
+  animation-delay: var(--gust-delay);
   animation-iteration-count: 1;
   animation-timing-function: ease-in-out;
 }
