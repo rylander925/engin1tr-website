@@ -14,7 +14,9 @@ const initialConditions = {
         cloudCover: 0,    //fraction: ^
         date: '',         //YYYY-MM-DD
         hour: 0           //Decimal number: 12:30PM would be represented as 12.5
-    }
+    },
+    locationName: "",
+    zipCode: ""
 };
 
 const ConditionsContext = createContext(null);
@@ -69,6 +71,27 @@ function conditionsReducer(conditions, action) {
                     hour: hour
                 }
             };
+        }
+        case 'update-weather-field': {
+            return {...conditions,
+                weather: {
+                    ...conditions.weather,
+                    [action.field]: action.value
+                }
+            };
+        }
+        case 'update-general': {
+            return {...conditions, 
+                elapsedTime: action.elapsedTime,
+                seed: action.seed,
+                speed: action.speed
+            }
+        }
+        case 'update-locationName': {
+            return {...conditions, locationName: action.locationName}
+        }
+        case 'update-zipCode': {
+            return {...conditions, zipCode: action.zipCode}
         }
         default: {
             throw new Error("ConditionsDispatch action type does not match handled actions");
