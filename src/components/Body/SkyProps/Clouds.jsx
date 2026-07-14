@@ -29,7 +29,8 @@ const HORIZON_BRIGHTNESS_INCREASE = 0.15     //Increased brightness of clouds at
 //Animation controls
 const BASE_DRIFT_DURATION = 50      //How long each cloud is on screen; actual reduced by windSpeed
 const DURATION_FACTOR_RANGE = 0.2   //Range in speeds clouds can move 
-const MAX_WIND_SPEED = 3            //Divides base duration; multiplied by wind speed factor
+const MAX_WIND_SPEED = 3            //Divides base duration; multiplied by conditions.weather.windSpeed (so at max windspeed, base duration will be divided by 3)
+const MIN_WIND_SPEED = 0.1
 const MAX_CLOUDS = 70               //Clouds when cloud cover is 100%
 
 const GUST_INTERVAL = 10000 // ms between automatic wind gusts
@@ -122,7 +123,7 @@ function linear(x, min) {
 export default function Clouds() {
     const conditions = useConditions();
 
-    const driftDuration = BASE_DRIFT_DURATION / (MAX_WIND_SPEED * conditions.weather.windSpeed);
+    const driftDuration = BASE_DRIFT_DURATION / (MAX_WIND_SPEED * linear(conditions.weather.windSpeed, 0.1));
     const visibleClouds = MAX_CLOUDS * steepHill(conditions.weather.cloudCover, 0.1)
 
     const [clouds, setClouds] = useState(() => Array.from({length:MAX_CLOUDS}, (_, i) => generateCloud(i, true))); //NOTE ID assigned to clouds is index + 1, not index

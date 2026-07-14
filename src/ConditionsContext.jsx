@@ -11,7 +11,7 @@ const initialConditions = {
     weather: { 
         zipcode: 0,
         precipitation: 0, //fraction: 1=heavy, 0=none (>1 = extreme)
-        windSpeed: 1,     //fraction: ^
+        windSpeed: 0,     //fraction: ^
         cloudCover: 0.5,    //fraction: ^
         date: '',         //YYYY-MM-DD
         hour: 0           //Decimal number: 12:30PM would be represented as 12.5
