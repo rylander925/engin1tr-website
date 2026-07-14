@@ -14,15 +14,10 @@ const initialConditions = {
         windSpeed: 1,     //fraction: ^
         cloudCover: 0.5,    //fraction: ^
         date: '',         //YYYY-MM-DD
-<<<<<<< HEAD
-        hour: 12           //Decimal number: 12:30PM would be represented as 12.5
-    }
-=======
         hour: 0           //Decimal number: 12:30PM would be represented as 12.5
     },
     locationName: "",
     zipCode: ""
->>>>>>> test-menu
 };
 
 const ConditionsContext = createContext(null);

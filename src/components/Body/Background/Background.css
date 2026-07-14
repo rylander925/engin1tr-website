@@ -84,73 +84,57 @@ Daytime - Clear */
   --sky-4: #ad835a; 
 }
 
-.sky-container .Garden,
-.sky-container canvas
-{
-  transition: filter 2s ease;
-}
+@property --grass-hue { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@property --grass-saturation { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --grass-brightness { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
 
-.sky-container .Garden, 
+.sky-container .clouds,
 .sky-container .garden,
-.sky-container #Garden,
-.sky-container #garden,
+.sky-container .garden-gusting,
 .sky-container canvas {
-  transition: filter 2s ease-in-out !important;
-}
-
-/* Nighttime Grass */
-.sky-container[data-time="night"] .Clouds,
-.sky-container[data-time="night"] .clouds,
-.sky-container[data-time="night"] #Clouds,
-.sky-container[data-time="night"] #clouds,
-
-.sky-container[data-time="night"] .Garden,
-.sky-container[data-time="night"] .garden,
-.sky-container[data-time="night"] #Garden,
-.sky-container[data-time="night"] #garden,
-.sky-container[data-time="night"] .Garden-gusting,
-.sky-container[data-time="night"] .garden-gusting,
-.sky-container[data-time="night"] #Garden-gusting,
-.sky-container[data-time="night"] #garden-gusting,
-.sky-container[data-time="night"] canvas
-{
-  filter: hue-rotate(35deg) saturate(55%) brightness(40%) !important;
+  filter: hue-rotate(var(--grass-hue)) saturate(var(--grass-saturation)) brightness(var(--grass-brightness));
+  transition: --grass-hue 2s ease, --grass-saturation 2s ease, --grass-brightness 2s ease !important;
 }
 
 /* Sunrise/Sunset Grass */
-.sky-container[data-time="golden-hour"] .Clouds,
 .sky-container[data-time="golden-hour"] .clouds,
-.sky-container[data-time="golden-hour"] #Clouds,
-.sky-container[data-time="golden-hour"] #clouds,
-
-.sky-container[data-time="golden-hour"] .Garden,
 .sky-container[data-time="golden-hour"] .garden,
-.sky-container[data-time="golden-hour"] #Garden,
-.sky-container[data-time="golden-hour"] #garden,
-.sky-container[data-time="golden-hour"] .Garden-gusting,
 .sky-container[data-time="golden-hour"] .garden-gusting,
-.sky-container[data-time="golden-hour"] #Garden-gusting,
-.sky-container[data-time="golden-hour"] #garden-gusting,
 .sky-container[data-time="golden-hour"] canvas
 {
-  filter: hue-rotate(-15deg) saturate(95%) brightness(75%) !important;
+  --grass-hue: -15deg;
+  --grass-saturation: 95%;
+  --grass-brightness: 75%;
 }
 
 /* Stormy Overcast Grass */
-.sky-container[data-weather="storm"] .Clouds,
 .sky-container[data-weather="storm"] .clouds,
-.sky-container[data-weather="storm"] #Clouds,
-.sky-container[data-weather="storm"] #clouds,
-
-.sky-container[data-weather="storm"] .Garden,
 .sky-container[data-weather="storm"] .garden,
-.sky-container[data-weather="storm"] #Garden,
-.sky-container[data-weather="storm"] #garden,
-.sky-container[data-weather="storm"] .Garden-gusting,
 .sky-container[data-weather="storm"] .garden-gusting,
-.sky-container[data-weather="storm"] #Garden-gusting,
-.sky-container[data-weather="storm"] #garden-gusting,
 .sky-container[data-weather="storm"] canvas
 {
-  filter: saturate(40%) brightness(65%) !important;
+  --grass-saturation: 40%;
+  --grass-brightness: 65%;
+}
+
+/* Nighttime Grass */
+.sky-container[data-time="night"][data-weather="clear"] .clouds,
+.sky-container[data-time="night"][data-weather="clear"] .garden,
+.sky-container[data-time="night"][data-weather="clear"] .garden-gusting,
+.sky-container[data-time="night"][data-weather="clear"] canvas
+{
+  --grass-hue: 35deg;
+  --grass-saturation: 55%;
+  --grass-brightness: 40%;
+}
+
+/* Nighttime Storm Grass */
+.sky-container[data-time="night"][data-weather="storm"] .clouds,
+.sky-container[data-time="night"][data-weather="storm"] .garden,
+.sky-container[data-time="night"][data-weather="storm"] .garden-gusting,
+.sky-container[data-time="night"][data-weather="storm"] canvas
+{
+  --grass-hue: 35deg;
+  --grass-saturation: 45%;
+  --grass-brightness: 30%;
 }
