@@ -138,3 +138,11 @@ Daytime - Clear */
   --grass-saturation: 45%;
   --grass-brightness: 30%;
 }
+.sky-container[data-time="day"][data-weather="clear"] .screen-text {
+  --screen-text-color: #1c285a;
+}
+
+.sky-container[data-time="night"], .sky-container[data-time="golden-hour"], .sky-container[data-weather="storm"] {
+  --screen-text-color: rgb(216, 216, 216);
+}
+

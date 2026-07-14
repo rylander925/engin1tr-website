@@ -26,7 +26,7 @@ function Timer() {
 
   return (
 
-      <div className='counter'>You've been touching grass for {formatElapsed(conditions.elapsedTime)}</div>
+      <div>You've been touching grass for {formatElapsed(conditions.elapsedTime)}</div>
   )
 }
 

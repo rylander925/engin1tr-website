@@ -13,8 +13,8 @@ function App() {
       <ConditionsProvider>
         <Background className = 'background'>
           <Menu />
-          <div className = 'UI'>
-            <Timer/>
+          <div className = 'screen-text'>
+            <Timer />
           </div>
           <Clouds />
           <Garden />
