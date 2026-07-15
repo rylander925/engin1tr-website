@@ -16,15 +16,11 @@
 
 @property --screen-text-color { syntax: '<color>'; inherits: true; initial-value: var(--text-h); }
 
-.screen-text {
+#screen-text {
   font-family: var(--mono);
+  font-size: medium;
   border-radius: 4px;
   color: var(--screen-text-color);
   transition: color 2s ease;
-
-  position: fixed;
-  top: 1rem;             
-  left: 50%;
-  transform: translateX(-50%);
   z-index: 10;
 }

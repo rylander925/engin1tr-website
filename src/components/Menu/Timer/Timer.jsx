@@ -26,7 +26,7 @@ function Timer() {
 
   return (
 
-      <div>You've been touching grass for {formatElapsed(conditions.elapsedTime)}</div>
+      <div className='timer' id='screen-text'>You've touched grass for {formatElapsed(conditions.elapsedTime)}</div>
   )
 }
 

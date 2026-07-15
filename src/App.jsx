@@ -4,6 +4,7 @@ import Background from './components/Body/Background/Background.jsx'
 import Menu from './components/Menu/Menu.jsx'
 import Timer from './components/Menu/Timer/Timer.jsx'
 import Clouds from './components/Body/SkyProps/Clouds.jsx'
+import Clock from './components/Menu/Clock/Clock.jsx'
 import { ConditionsProvider, useConditions, useConditionsDispatch }  from './ConditionsContext.jsx'
 import './App.css'
 
@@ -15,6 +16,7 @@ function App() {
           <Menu />
           <div className = 'screen-text'>
             <Timer />
+            <Clock />
           </div>
           <Clouds />
           <Garden />

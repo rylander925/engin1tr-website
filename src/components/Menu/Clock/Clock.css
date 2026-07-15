@@ -1,0 +1,7 @@
+.clock {
+  position: absolute;
+  text-align: right;
+  top: 1rem;           
+  right: 20px;
+  margin: 0;
+}

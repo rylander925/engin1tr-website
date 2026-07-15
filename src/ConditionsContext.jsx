@@ -13,11 +13,11 @@ const initialConditions = {
         precipitation: 0, //fraction: 1=heavy, 0=none (>1 = extreme)
         windSpeed: 0.5,     //fraction: ^
         cloudCover: 0.5,    //fraction: ^
-        date: '',         //YYYY-MM-DD
-        hour: 12           //Decimal number: 12:30PM would be represented as 12.5
+        hour: 0           //Decimal number: 12:30PM would be represented as 12.5
     },
+    autoUpdateClock: true,   //If false, hour will not automatically update
     locationName: "",
-    zipCode: ""
+    zipCode: "",
 };
 
 const ConditionsContext = createContext(null);
@@ -69,13 +69,15 @@ function conditionsReducer(conditions, action) {
                     precipitation: action.weather.precipitation/HEAVY_RAIN,
                     windSpeed: action.weather.wind_speed_10m/HEAVY_WIND,
                     cloudCover: action.weather.cloud_cover/100,
-                    date: date,
                     hour: hour
                 }
             };
         }
+
+        //Dispatched when manually setting a weather attribute. Dispatched by WeatherUI.jsx
         case 'update-weather-field': {
             return {...conditions,
+                autoUpdateClock: (action.field === 'hour' ? false : conditions.autoUpdateClock), //Stops auto update clock if manually changed
                 weather: {
                     ...conditions.weather,
                     [action.field]: action.value
@@ -94,6 +96,23 @@ function conditionsReducer(conditions, action) {
         }
         case 'update-zipCode': {
             return {...conditions, zipCode: action.zipCode}
+        }
+        //Updates the current date and hour using local time
+        //Dispatched by Clock.jsx
+        case 'update-now': {
+            if(conditions.autoUpdateClock) {
+                const now = new Date();
+                const hour = now.getHours();
+                return {...conditions, weather: {...conditions.weather, hour: hour} };
+            }
+            return {...conditions};
+        }
+
+        case 'toggle-autoUpdateClock': {
+            if(conditions.autoUpdateClock) {
+                return {...conditions, autoUpdateClock: false};
+            }
+            return {...conditions, autoUpdateClock: true};
         }
         default: {
             throw new Error("ConditionsDispatch action type does not match handled actions");
