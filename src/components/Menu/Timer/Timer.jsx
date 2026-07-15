@@ -13,11 +13,14 @@ function formatElapsed(totalSeconds) {
   return output
 }
 
+
+//Shows how long user has hovered their mouse over the grass
 function Timer() {
   const conditions = useConditions();
   const dispatch = useConditionsDispatch();
   const updateTime = 1000/conditions.speed //Time in MS between 1s intervals
 
+  //Update time when hovering. TODO: Move to Garden.jsx, maybe remove hovering from context
   useEffect(() => {
     if(!conditions.isHovering) { return }
     const intervalId = setInterval(() => {dispatch({ type: 'increment-time' })}, updateTime)
@@ -25,7 +28,6 @@ function Timer() {
   }, [conditions.isHovering])
 
   return (
-
       <div className='timer' id='screen-text'>You've touched grass for {formatElapsed(conditions.elapsedTime)}</div>
   )
 }

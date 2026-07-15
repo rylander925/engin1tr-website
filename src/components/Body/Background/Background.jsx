@@ -24,7 +24,7 @@ function Background({children})
       timeRange = 'night'; 
     } 
 
-    const isStormy = weatherData.precipitation > 0 || weatherData.cloudCover > 0.5; 
+    const isStormy = weatherData.precipitation > 0 || weatherData.cloudCover > 0.8; 
     weatherState = isStormy ? 'storm' : 'clear'; 
   }
 

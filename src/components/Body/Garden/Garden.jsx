@@ -28,17 +28,33 @@ const SWAY_DELAY_RANGE = 20       // seconds -- randomizes phase so blades don't
 const GUST_INTERVAL = 7000         // average ms between automatic wind gusts
 const GUST_INTERVAL_RANGE = 6000
 const BASE_GUST_DURATION = 4000          // ms the gust class stays applied
-const WIND_INTENSITY_FACTOR = 3
+
+const WIND_INTENSITY_FACTOR = 3     //Determins range of wind speeds between wind=0 and wind = 100%
 const MIN_GUST_INTENSITY = 0.5
 const MIN_SWAY_INTENSITY = 1
 
 //TODO: Add support for different plant types
 
+//
 class PlantGenerator extends Generator {
     constructor( baseInterval, slowdownFactor, seed ) {
         super(baseInterval, slowdownFactor, seed);
     }
 
+    /*Returns a map of attributes
+        id:             Holds current index
+        appearTime:     Theoretical (which should be the actual) time plant spawns. Used to calculate plant age.
+        x:              Position from the left. Range is restricted around center based on number of grass blades and spread rate.
+        height:         Plant height
+        flip:           L/R orientation of plant
+        lean:           Tilt of plant
+        hue:            Slight hue shift from default green
+
+        gustDelay:      Plants to the right of the screen will be blown slightly later when a gust happens
+
+        swayDuration:   Determines duration (and therefore speed) of random plant sways
+        swayDelay:      Determines the frequency of random plant sways.
+    */
     generateItemAttributes(rand, index) {
         const x = 50 + (rand() - 0.5) * Math.min(index * SPREAD_RATE, 100); 
         return {
@@ -46,20 +62,20 @@ class PlantGenerator extends Generator {
             appearTime: this.timeForIndex(index),
             src: VARIANTS[Math.floor(rand() * VARIANTS.length)],
 
-            //% range about center governed by index * SPREAD_RATE
             x: x, 
-
             height: HEIGHT_AVERAGE + (rand() - 0.5) * HEIGHT_RANGE,
             flip: rand() < 0.5,
             lean: (rand() - 0.5) * LEAN_RANGE,
             hue: (rand() - 0.5) * HUE_SHIFT_RANGE,
 
             gustDelay: 0.7 * x/100,
+
             swayDuration: SWAY_DURATION_BASE + rand() * SWAY_DURATION_RANGE,
             swayDelay: rand() * SWAY_DELAY_RANGE,
         }
     }
 
+    //Wrapper div so plant animations can trigger independently (and stack upon) eachother and existing transformations to the plant.
     static PlantAnimation( {plant, children} ) {
         return(
             <div
@@ -82,6 +98,7 @@ class PlantGenerator extends Generator {
         )
     }
 
+    //Create a plant div
     static Plant( {plant, index} ) {
         const conditions = useConditions();
         const dispatch = useConditionsDispatch();

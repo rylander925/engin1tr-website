@@ -3,11 +3,14 @@ import { useState, useEffect, useMemo } from 'react'
 //Time dependent item generator
 //TODO: Determine whether index should be stored inside of the class
 export class Generator {
+
+    //Generates items acording to B*t + S*t^2 where B is base interval, S is slowdown factor
     constructor(baseInterval, slowdownFactor, seed) {
         this.baseInterval = baseInterval;
         this.slowdownFactor = slowdownFactor;
         this.seed = seed;
 
+        //Chooses a new seed per generated item based on its index. 9781 is a largish odd number used to make seeds as differentiated as possible
         this.rngForIndex = (i) => Generator.mulberry32(this.seed + i * 9781);
     }
 
@@ -26,6 +29,7 @@ export class Generator {
         return Math.max(0, Math.floor(solution));
     }
 
+    //Returns a PRNG. You can search up 'mulberry32' for details, this function is well documented.
     static mulberry32(seed) {
         return function () {
             seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
@@ -35,6 +39,7 @@ export class Generator {
         };
     }
 
+    //Generates a PRNG for the item and passes it to generateItemAttributes, which uses the PRNG to generate item specific attributes
     generateItem(index) {
         index = index + 1;
         const rand = this.rngForIndex(index);
@@ -52,25 +57,26 @@ export class Generator {
         return Array.from({ length:this.indexForTime(elapsedTime) }, (_, i) => this.generateItem(i));
     }
 
-    //generates list of members alive at the current time
-    generateWindow(elapsedTime, lifespan) {
-        const total = this.indexForTime(elapsedTime);
-        const totalBefore = Math.max(0, this.indexForTime(elapsedTime - lifespan))
-        console.log(this.generateItem(10 ))
-        return Array.from({ length:(total - totalBefore) }, (_, i) => this.generateItem(i + totalBefore));
+    //Generates an array of a specified amount of item attributes.
+    //Since PRNG is deterministic based on index, use indexShift to adjust the seed for each item.
+        //E.g. if indexShift is 0, an amount of 30 will always generate the same 30 items. Using indexShift of 30 will generate 30 new items, while indexShift 15 will still have 15 of the old items.
+    generateAmount(amount, indexShift) {
+        return Array.from({ length:(amount) }, (_, i) => this.generateItem(i + indexShift));
     }
 
-    useGenerableAtWindow(elapsedTime, lifespan) {
+    //Custom hook that calls useMemo. Generates and returns a memoized array of item attributes. Update indexshift, amount, or seed to regenerate items
+    useGenerableAmount(amount, indexShift) {
         return useMemo( 
-            () => this.generateWindow(elapsedTime, lifespan),
-            [elapsedTime, lifespan, this.seed, this.baseInterval]
+            () => this.generateWindow(amount, indexShift),
+            [amount, indexShift, this.seed]
         )
     }
 
+    //Custom hook that calls useMemo. Generates and returns a memoized array of item attributes based on the given time. Updates when time changes, or when generation conditions (baseinterval, slowdownfactor, seed) change.
     useGenerableAtTime(elapsedTime) {
         return useMemo(
                 () => this.generateAt(elapsedTime), 
-                [elapsedTime, this.seed]
+                [elapsedTime, this.baseInterval, this.slowdownFactor, this.seed]
             );  
     }
 

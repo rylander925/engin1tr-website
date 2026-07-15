@@ -60,7 +60,6 @@ function conditionsReducer(conditions, action) {
             return {...conditions, isHovering: false}
         }
         case 'update-weather': {
-            console.log(JSON.stringify(conditions.weather))
             const [date, timeString] = action.weather.time.split('T')
             let [hour, minute] = timeString.split(':')
             hour = Number(hour) + Number(minute)/60
