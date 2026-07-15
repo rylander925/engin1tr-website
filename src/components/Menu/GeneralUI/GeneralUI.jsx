@@ -1,4 +1,5 @@
 import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
+import { useGarden, useGardenDispatch } from '../../../GardenContext'
 import { useState, useEffect } from 'react'
 import './GeneralUI.css'
 
@@ -6,28 +7,29 @@ function GeneralUI() {
   const dispatch = useConditionsDispatch()
   const conditions = useConditions()
 
-  const [time, setTime] = useState(conditions.elapsedTime)
+  const garden = useGarden()
+  const gardenDispatch = useGardenDispatch()
+
+  const [time, setTime] = useState(garden.elapsedTime)
   const [seed, setSeed] = useState(conditions.seed)
-  const [speed, setSpeed] = useState(conditions.speed)
+  const [speed, setSpeed] = useState(garden.speed)
 
   useEffect(() => {
-    setTime(conditions.elapsedTime);
-  }, [conditions.elapsedTime]);
+    setTime(garden.elapsedTime);
+  }, [garden.elapsedTime]);
 
   useEffect(() => {
     setSeed(conditions.seed);
   }, [conditions.seed]);
 
   useEffect(() => {
-    setSpeed(conditions.speed);
-  }, [conditions.speed]);
+    setSpeed(garden.speed);
+  }, [garden.speed]);
 
   const handleButton = () => {
-    dispatch({type: 'update-general',
-      elapsedTime: time || 0,
-      seed: seed || 0,
-      speed: speed || 0
-    })
+    gardenDispatch({type: 'set-time', elapsedTime: time || 0});
+    gardenDispatch({type: 'set-speed', speed: speed || 0});
+    dispatch({type: 'set-seed', seed: seed || 0});
   }
 
   const betterParse = (value) => {

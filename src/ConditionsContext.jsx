@@ -4,10 +4,7 @@ const HEAVY_RAIN = 10; //10mm of rain per hour
 const HEAVY_WIND = 50; //50km per hour
 
 const initialConditions = {
-    elapsedTime: 1800,       //Set default to another value to pregenerate grass
-    isHovering: false,
     seed: 1,              //PRNG is seeded; this can be any number, determines plant generation
-    speed: 10,           //Factor to speed up time speed 1 -> 1s real = 1s simulated
     weather: { 
         zipcode: 0,
         precipitation: 0, //fraction: 1=heavy, 0=none (>1 = extreme)
@@ -50,15 +47,6 @@ export function useConditionsDispatch() {
 
 function conditionsReducer(conditions, action) {
     switch (action.type) {
-        case 'increment-time': {
-            return {...conditions, elapsedTime: conditions.elapsedTime + 1};
-        }
-        case 'set-hovering': {
-            return {...conditions, isHovering: true}
-        }
-        case 'unset-hovering': {
-            return {...conditions, isHovering: false}
-        }
         case 'update-weather': {
             const [date, timeString] = action.weather.time.split('T')
             let [hour, minute] = timeString.split(':')
@@ -83,11 +71,9 @@ function conditionsReducer(conditions, action) {
                 }
             };
         }
-        case 'update-general': {
+        case 'set-seed': {
             return {...conditions, 
-                elapsedTime: action.elapsedTime,
                 seed: action.seed,
-                speed: action.speed
             }
         }
         case 'update-locationName': {

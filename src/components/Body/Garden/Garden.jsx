@@ -6,6 +6,7 @@ import grass3 from '../../../assets/plants/grass3.svg'
 import grass4 from '../../../assets/plants/grass4.svg'
 import { Generator } from './Generable' 
 import './Garden.css'
+import { useGarden, useGardenDispatch } from '../../../GardenContext'
 import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
 
 const VARIANTS = [grass1, grass2, grass3, grass4]
@@ -99,17 +100,18 @@ class PlantGenerator extends Generator {
     }
 
     //Create a plant div
+    //TODO: Maybe move speed to garden context
     static Plant( {plant, index} ) {
-        const conditions = useConditions();
-        const dispatch = useConditionsDispatch();
-        const age = conditions.elapsedTime - plant.appearTime;
-        const stillGrowing = age < GROW_DURATION * conditions.speed;
+        const garden = useGarden();
+        const gardenDispatch = useGardenDispatch();
+        const age = garden.elapsedTime - plant.appearTime;
+        const stillGrowing = age < GROW_DURATION * garden.speed;
         return(
-            //Position wrapper
+            //Position wrapper so hover bounding box is static
             <div
                 className = 'plant-bounding-box' //Set outline visible in css to show hitbox
-                onMouseEnter={() => dispatch({type:'set-hovering'})}
-                onMouseLeave={() => dispatch({type:'unset-hovering'})}
+                onMouseEnter={() => gardenDispatch({type:'set-hovering'})}
+                onMouseLeave={() => gardenDispatch({type:'unset-hovering'})}
                 style = {{
                         left: `${plant.x}%`,
                         bottom: '0%',
@@ -133,7 +135,7 @@ class PlantGenerator extends Generator {
                                 //if elapsedTime is set past age, don't show animation
                                 clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
                                 animation: stillGrowing ?
-                                    `growReveal ${GROW_DURATION/conditions.speed}s ease-in-out 0s both`
+                                    `growReveal ${GROW_DURATION/garden.speed}s ease-in-out 0s both`
                                     : undefined,
                             }}
                         />
@@ -149,14 +151,26 @@ export default function Garden() {
     const conditions = useConditions();
     const weather = conditions.weather
     const dispatch = useConditionsDispatch();
+
+    const garden = useGarden();
+    const gardenDispatch = useGardenDispatch();
+   
     const plantGenerator = new PlantGenerator(BASE_INTERVAL, SLOWDOWN_FACTOR, conditions.seed);
-    const plants = plantGenerator.useGenerableAtTime(conditions.elapsedTime);
+    const plants = plantGenerator.useGenerableAtTime(garden.elapsedTime);
 
     const gustIntensity = MIN_GUST_INTENSITY + weather.windSpeed * WIND_INTENSITY_FACTOR
     const swayIntensity = MIN_SWAY_INTENSITY + weather.windSpeed * WIND_INTENSITY_FACTOR
     const [gustVariation, setGustVariation] = useState(0.5)
+
+    //Increment elapsed time on hover.
+    //Time is based on speed.
+    useEffect(() => {
+        if(!garden.isHovering) { return }
+        const intervalId = setInterval(() => {gardenDispatch({ type: 'increment-time' })}, 1000 / garden.speed)
+        return () => clearInterval(intervalId)
+    }, [garden.isHovering])
     
-    // Periodic wind gust: change css class to switch between animations
+    // Periodic wind gust
     const [gusting, setGusting] = useState(false)
     useEffect(() => {
         let gustTimeout;

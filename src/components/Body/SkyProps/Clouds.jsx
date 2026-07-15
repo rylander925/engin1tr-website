@@ -149,7 +149,6 @@ export default function Clouds() {
                     cloudCover={conditions.weather.cloudCover} 
                     visible={index < visibleClouds} 
                     driftDuration={driftDuration} 
-                    elapsedTime={conditions.elapsedTime} 
                     index={index} 
                     rerollCloud={rerollCloud}
                     />
