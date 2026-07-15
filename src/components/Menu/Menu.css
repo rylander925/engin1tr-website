@@ -13,10 +13,21 @@
   border: none;
   font-size: 24px;
   cursor: pointer;
+  padding: 0;
 }
 
 .menu-list {
   background-color: rgb(34, 33, 33);
+  opacity: 0.8;
   padding: 0.5rem;
   width: 10rem;
+  font-family: var(--mono);
+  visibility: hidden;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out, visibility 1s ease-in-out;
+}
+
+.menu-list.open {
+  visibility: visible;
+  transform: translateX(0);
 }
