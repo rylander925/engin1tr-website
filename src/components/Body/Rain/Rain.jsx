@@ -21,11 +21,9 @@ function Rain()
   const windStyles = useMemo(() => {
     const maxSkewDegrees = 35;
     const currentSkew = windSpeed * maxSkewDegrees;
-    const maxHorizontalDriftPixels = windSpeed * 250;
 
     return {
       '--wind-skew': `${currentSkew}deg`,
-      '--wind-drift': `${maxHorizontalDriftPixels}px`
     };
   }, [windSpeed]);
 

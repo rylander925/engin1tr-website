@@ -30,7 +30,10 @@
   }
   100%
   {
-    transform: translateY(120vh) translateX(var(--wind-drift, 0px)) skewX(var(--wind-skew, 0deg));
+    transform: 
+    translateY(120vh) 
+    translateX(calc(120vh * tan(var(--wind-skew, 0deg)))) 
+    skewX(var(--wind-skew, 0deg));
   }
 }
 
