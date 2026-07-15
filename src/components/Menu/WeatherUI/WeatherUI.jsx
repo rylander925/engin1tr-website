@@ -60,7 +60,7 @@ function WeatherUI() {
   return (
     <>
       <div className='weather-container'>
-        <label>Location:</label>
+        <label>Weather Location:</label>
         <input
           type='text'
           placeholder='Enter ZIP code'
