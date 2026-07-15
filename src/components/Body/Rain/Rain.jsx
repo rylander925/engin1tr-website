@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { useConditions } from '../../../ConditionsContext';
 import './Rain.css';
 
-function Rain() {
+function Rain()
+{
   const conditions = useConditions();
   const rawPrecipitation = conditions?.weather?.precipitation || 0;
   const windSpeed = conditions?.weather?.windSpeed || 0;
@@ -11,8 +12,6 @@ function Rain() {
     if (rawPrecipitation <= 0) return 0;
     return rawPrecipitation > 1 ? rawPrecipitation / 10 : rawPrecipitation;
   }, [rawPrecipitation]);
-
-  if (normalizedPrecipitation <= 0) return null;
 
   const dropCount = useMemo(() => {
     const calculatedDrops = Math.floor(normalizedPrecipitation * 120);
@@ -24,7 +23,7 @@ function Rain() {
     const currentSkew = windSpeed * maxSkewDegrees;
     const maxHorizontalDriftPixels = windSpeed * 250;
 
-    return{
+    return {
       '--wind-skew': `${currentSkew}deg`,
       '--wind-drift': `${maxHorizontalDriftPixels}px`
     };
@@ -49,6 +48,8 @@ function Rain() {
       };
     });
   }, [dropCount]);
+
+    if (normalizedPrecipitation <= 0) return null;
 
   return (
     <div className="rain-container" aria-hidden="true" style={windStyles}>
