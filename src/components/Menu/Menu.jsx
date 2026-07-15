@@ -10,13 +10,11 @@ function Menu() {
     <>
       <div className='menu-container'>
         <button className='menu-button' onClick={() => setIsOpen((prev) => !prev)}>⚙️</button>
-        {isOpen &&
-          <div className='menu-list'>
-            <GeneralUI />
-            <hr />
-            <WeatherUI />
-          </div>
-        }
+        <div className={`menu-list ${isOpen ? 'open' : ''}`}>
+          <GeneralUI />
+          <hr />
+          <WeatherUI />
+        </div>
       </div>
     </>
   )
