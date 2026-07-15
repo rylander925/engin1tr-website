@@ -9,7 +9,7 @@
   padding: 0;
   overflow: hidden;
   
-  /* Default Fallback Background */
+  /* Default Background */
   background: linear-gradient(
     to bottom,
     var(--sky-1, #4a90e2),
@@ -18,7 +18,6 @@
     var(--sky-4, #e3f2fd)
   );
   
-  /* Smooth crossfade for colors */
   transition: --sky-1 2s ease, --sky-2 2s ease, --sky-3 2s ease, --sky-4 2s ease;
 }
 
@@ -28,7 +27,7 @@
 @property --sky-4 { syntax: '<color>'; inherits: false; initial-value: #e3f2fd; }
 
 /* 
-  Gradient Variation Matrix:
+  Gradient Variation:
   
 Daytime - Clear */
 .sky-container[data-time="day"][data-weather="clear"]
@@ -66,7 +65,7 @@ Daytime - Clear */
   --sky-4: #485261; 
 }
 
-/* Sunset/Sunrise (Sunrise 5-7 AM / Sunset 5-7 PM) - Clear */
+/* Sunset/Sunrise (5-7 AM / 5-7 PM) - Clear */
 .sky-container[data-time="golden-hour"][data-weather="clear"]
 {
   --sky-1: #324068;
@@ -91,7 +90,8 @@ Daytime - Clear */
 .sky-container .clouds,
 .sky-container .garden,
 .sky-container .garden-gusting,
-.sky-container canvas {
+.sky-container canvas
+{
   filter: hue-rotate(var(--grass-hue)) saturate(var(--grass-saturation)) brightness(var(--grass-brightness));
   transition: --grass-hue 2s ease, --grass-saturation 2s ease, --grass-brightness 2s ease !important;
 }
@@ -138,11 +138,70 @@ Daytime - Clear */
   --grass-saturation: 45%;
   --grass-brightness: 30%;
 }
-.sky-container[data-time="day"][data-weather="clear"] .screen-text {
+.sky-container[data-time="day"][data-weather="clear"] .screen-text
+{
   --screen-text-color: #1c285a;
 }
 
-.sky-container[data-time="night"], .sky-container[data-time="golden-hour"], .sky-container[data-weather="storm"] {
+.sky-container[data-time="night"], .sky-container[data-time="golden-hour"], .sky-container[data-weather="storm"]
+{
   --screen-text-color: rgb(216, 216, 216);
 }
 
+
+.sky-container::after
+{
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  
+  opacity: var(--rain-opacity, 0);
+  transition: opacity 1.5s ease-in-out;
+}
+
+/* Daytime storm */
+.sky-container[data-time="day"]::after
+{
+  background: linear-gradient(to bottom, #3b424d, #555d6b, #788294, #afb8c7);
+}
+
+/* Nighttime storm */
+.sky-container[data-time="night"]::after
+{
+  background: linear-gradient(to bottom, #181b22, #242933, #343b47, #485261);
+}
+
+/* Golden-hour storm */
+.sky-container[data-time="golden-hour"]::after
+{
+  background: linear-gradient(to bottom, #211c2b, #3d2f47, #6e4d58, #ad835a);
+}
+
+
+section.sky-container[data-time="day"][data-weather="storm"]
+{
+  --sky-1: #2a75d3 !important;
+  --sky-2: #5fa4e6 !important;
+  --sky-3: #9ad1f5 !important;
+  --sky-4: #e3f2fd !important;
+}
+
+section.sky-container[data-time="night"][data-weather="storm"]
+{
+  --sky-1: #060d21 !important;
+  --sky-2: #0f1c3f !important;
+  --sky-3: #1a2d59 !important;
+  --sky-4: #2d467d !important;
+}
+
+section.sky-container[data-time="golden-hour"][data-weather="storm"]
+{
+  --sky-1: #324068 !important;
+  --sky-2: #6d6175 !important;
+  --sky-3: #c28881 !important;
+  --sky-4: #e0b48d !important;
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useConditions } from '../../../ConditionsContext'
 import Clouds from '../SkyProps/Clouds'
+import Rain from '../Rain/Rain';
 import './Background.css'
 
 function Background({children})
@@ -28,6 +29,8 @@ function Background({children})
     weatherState = isStormy ? 'storm' : 'clear'; 
   }
 
+  const stormOpacity = weatherData ? (weatherData.precipitation > 1 ? weatherData.precipitation / 10 : weatherData.precipitation) : 0;
+
   return ( 
     <section
       id="center"
@@ -36,9 +39,11 @@ function Background({children})
       data-weather={weatherState}
       style=
       {{
-      transition: '--sky-1 2s ease, --sky-2 2s ease, --sky-3 2s ease, --sky-4 2s ease'
+      transition: '--sky-1 2s ease, --sky-2 2s ease, --sky-3 2s ease, --sky-4 2s ease',
+      '--rain-opacity': stormOpacity
       }}
       > 
+        <Rain />
       {children} 
     </section> 
   )
