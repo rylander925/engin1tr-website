@@ -31,3 +31,7 @@
   visibility: visible;
   transform: translateX(0);
 }
+
+.menu-list button, .menu-list input {
+  font-family: inherit;
+}

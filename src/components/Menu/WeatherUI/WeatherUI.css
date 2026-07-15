@@ -3,7 +3,7 @@
   flex-direction: column;
 }
 
-hr {
+.weather-container hr {
   margin-left: 0;
   margin-right: 0;
 }
