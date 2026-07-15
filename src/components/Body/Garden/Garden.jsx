@@ -100,12 +100,14 @@ class PlantGenerator extends Generator {
     }
 
     //Create a plant div
-    //TODO: Maybe move speed to garden context
     static Plant( {plant, index} ) {
         const garden = useGarden();
         const gardenDispatch = useGardenDispatch();
+
+        //Keep track of age to determine whether to play growth animation
         const age = garden.elapsedTime - plant.appearTime;
         const stillGrowing = age < GROW_DURATION * garden.speed;
+        
         return(
             //Position wrapper so hover bounding box is static
             <div
