@@ -22,13 +22,16 @@ const MIN_GUST_INTENSITY = 0.5
 const MIN_SWAY_INTENSITY = 1
 
 export default function Garden() {
+    //Weather and seed information
     const conditions = useConditions();
     const weather = conditions.weather
     const dispatch = useConditionsDispatch();
 
+    //Elapsed time, hover information
     const garden = useGarden();
     const gardenDispatch = useGardenDispatch();
    
+    //Create seed dependent plant generator; Regenerates all plants each seed change
     const plantGenerator = useMemo(
         () => new PlantGenerator(BASE_INTERVAL, SLOWDOWN_FACTOR, conditions.seed),
         [conditions.seed]
@@ -57,13 +60,14 @@ export default function Garden() {
         const scheduleGust = () => {
             setGustVariation(Math.random())
             const gustInterval = BASE_GUST_DURATION + (GUST_INTERVAL + GUST_INTERVAL_RANGE * (Math.random() - 0.5))/gustIntensity;
+
+            //Plays animation by flipping className on and off. Not best but whatever TODO: Find better way
             gustTimeout = setTimeout(() => {
                 setGusting(false);
                 setTimeout(() => setGusting(true), 250); //Multiply by 2 to allow plants growing mid gust to blow. Not a complete fix
                 scheduleGust();
             }, gustInterval);
         };
-
         scheduleGust();
         return () => clearTimeout(gustTimeout);
     }, []);
