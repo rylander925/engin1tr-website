@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo } from 'react'
 //TODO: Determine whether index should be stored inside of the class
 export class Generator {
 
+    _cachedItems = new Array(0);
+
     //Generates items acording to B*t + S*t^2 where B is base interval, S is slowdown factor
     constructor(baseInterval, slowdownFactor, seed) {
         this.baseInterval = baseInterval;
@@ -15,18 +17,19 @@ export class Generator {
     }
 
     //Return the elapsed time at which nth plant appears
-    timeForIndex(n) {
+    timeForIndex(index) {
+        const n = index + 1
         return n * this.baseInterval + this.slowdownFactor * (n ** 2)
     }
 
-    //Return the number of plants (called index for consistency) at a given elapsed time
+    //Returns the final index of plant (number - 1) at a given elapsed time
     indexForTime(elapsedTime) {
         if(this.slowdownFactor == 0) {
             return Math.max(0, elapsedTime/this.baseInterval)
         }
         const a = this.slowdownFactor, b = this.baseInterval, c = -elapsedTime;
         const solution = (-b + Math.sqrt(b**2 - 4*a*c)) / (2*a);
-        return Math.max(0, Math.floor(solution));
+        return (Math.max(0, Math.floor(solution)) - 1);
     }
 
     //Returns a PRNG. You can search up 'mulberry32' for details, this function is well documented.
@@ -41,7 +44,6 @@ export class Generator {
 
     //Generates a PRNG for the item and passes it to generateItemAttributes, which uses the PRNG to generate item specific attributes
     generateItem(index) {
-        index = index + 1;
         const rand = this.rngForIndex(index);
         return this.generateItemAttributes(rand, index);
     }
@@ -54,7 +56,17 @@ export class Generator {
 
     //generate full list at given time
     generateAt(elapsedTime) {
-        return Array.from({ length:this.indexForTime(elapsedTime) }, (_, i) => this.generateItem(i));
+        const index = this.indexForTime(elapsedTime);
+        if(this._cachedItems.length <= index) {
+            const startIndex = this._cachedItems.length;
+            const newItems = Array.from(
+                    {length:(index+1 - startIndex)}, 
+                    (_, i) => this.generateItem(i + this._cachedItems.length)
+                )
+            this._cachedItems.push(...newItems);
+        }
+        this._cachedItems.length = index + 1;
+        return this._cachedItems;
     }
 
     //Generates an array of a specified amount of item attributes.
