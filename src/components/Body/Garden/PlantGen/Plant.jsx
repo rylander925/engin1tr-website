@@ -2,6 +2,8 @@ import { useGarden, useGardenDispatch } from "../../../../GardenContext";
 import '../Garden.css'
 
 export default class Plant {
+
+    //Default settings (as static properties)
     static className = 'plant';
     static gustClassName = 'plant-gust';
     static swayClassName = 'plant-sway';
@@ -26,18 +28,19 @@ export default class Plant {
                                                 // gust delay is gustPositionDelayFactor * x/100 seconds
                                                 // (x is from 0 to 100)
 
-    id = -1;
-    appearTime = -1;                        // used to track whether or not to play growth animation
-    src = '';                               // source used in <img>
-    x = -1;                                 // percent of screen, passed as x%
-    y = 0;                                  // percent of screen, passed as y%
-    height = -1;                            // pixels
-    flipped = false;                        // if true, flips the L/R orientation of plant
-    lean = 0;                               // angle to tilt plant
-    hue = 0;                                // angle to hueRotate
-    gustDelay = 0;                          // determined by x position, used to make right plants gust later than left plants
-    swayDuration = 0;                       // determines how fast plants sway in the wind.
-    swayDelay = 0;                          // determines initial delay (used to create phase difference in plant sways)
+    //Plant properties
+        id = -1;
+        appearTime = -1;                        // used to track whether or not to play growth animation
+        src = '';                               // source used in <img>
+        x = -1;                                 // percent of screen, passed as x%
+        y = 0;                                  // percent of screen, passed as y%
+        height = -1;                            // pixels
+        flipped = false;                        // if true, flips the L/R orientation of plant
+        lean = 0;                               // angle to tilt plant
+        hue = 0;                                // angle to hueRotate
+        gustDelay = 0;                          // determined by x position, used to make right plants gust later than left plants
+        swayDuration = 0;                       // determines how fast plants sway in the wind.
+        swayDelay = 0;                          // determines initial delay (used to create phase difference in plant sways)
 
     //Source must be set in child class constructor
     //rand is a function that generates a number between 0 and 1
@@ -62,6 +65,17 @@ export default class Plant {
 
     //By default does not take children.
     Plant = () => {
+        return(
+            <this.PlantPositionWrapper>
+                <this.PlantAnimation>
+                    <this.PlantImage />
+                </this.PlantAnimation>
+            </this.PlantPositionWrapper>
+        );
+    }
+
+    //Implements size, angle, color properties
+    PlantImage = () => {
         const garden = useGarden();
 
         //Keep track of age to determine whether to play growth animation
@@ -69,31 +83,27 @@ export default class Plant {
         const stillGrowing = age < this.constructor.growDuration * garden.speed;
 
         return(
-            <this.PlantPositionWrapper>
-                <this.PlantAnimation>
-                    <img
-                        className = {this.constructor.className}
-                        src = {this.src}
-                        style = {{
-                            transformOrigin: 'bottom center',
-                            display: 'block',
-                            
-                            height: this.height,
-                            transform: `scaleX(${this.flipped ? -1 : 1}) 
-                                        rotate(${this.lean}deg)`,
-                            filter: `hue-rotate(${this.hue}deg)`,
+            <img
+                className = {this.constructor.className}
+                src = {this.src}
+                style = {{
+                    transformOrigin: 'bottom center',
+                    display: 'block',
+                    
+                    height: this.height,
+                    transform: `scaleX(${this.flipped ? -1 : 1}) 
+                                rotate(${this.lean}deg)`,
+                    filter: `hue-rotate(${this.hue}deg)`,
 
-                            //Growth animation
-                            //if elapsedTime is set past age, doesnt show animation
-                            clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
-                            animation: stillGrowing ?
-                                `growReveal ${this.constructor.growDuration/garden.speed}s ease-in-out 0s both`
-                                : undefined,
-                        }}
-                    />
-                </this.PlantAnimation>
-            </this.PlantPositionWrapper>
-        )
+                    //Growth animation
+                    //if elapsedTime is set past age, doesnt show animation
+                    clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
+                    animation: stillGrowing ?
+                        `growReveal ${this.constructor.growDuration/garden.speed}s ease-in-out 0s both`
+                        : undefined,
+                }}
+            />
+        );
     }
 
     PlantPositionWrapper = ({children}) => {
