@@ -8,182 +8,24 @@ import { Generator } from './Generable'
 import './Garden.css'
 import { useGarden, useGardenDispatch } from '../../../GardenContext'
 import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
+import { Plant } from './Plant'
 
 //Plant gen controls
-const BASE_INTERVAL = 1        //generate blade every 10 seconds
+const BASE_INTERVAL = 1         //Base interval between plant gens
 const SLOWDOWN_FACTOR = 0.5     //larger factor slows down growth as # of blades increases
-const SPREAD_RATE = 2       // Determines how x pos spread of plants changes with # of plants
-const HEIGHT_AVERAGE = 150  // Average plant height
-const HEIGHT_RANGE = 150     // Total plant height range around average
-const LEAN_RANGE = 30       // Range of plant rotation in degrees (around vertical)
-const HUE_SHIFT_RANGE = 40  // Range in hue shift about unchanged image 
+                                //num = base*t + slowdown*t^2
 
-//Animation controls
-const GROW_DURATION = 10        // seconds -- how long the entrance animation takes
-const SWAY_DURATION_BASE = 3   // seconds -- fastest possible sway cycle
-const SWAY_DURATION_RANGE = 10  // seconds -- spread added on top of the base, per blade
-const SWAY_DELAY_RANGE = 20       // seconds -- randomizes phase so blades don't sync up
+//Gust and wind controls
+const GUST_INTERVAL = 12000         // average ms between automatic wind gusts
+const GUST_INTERVAL_RANGE = 8000    // ms range between gusts
+const BASE_GUST_DURATION = 4000     // ms the gust class stays applied
 
-const GUST_INTERVAL = 10000         // average ms between automatic wind gusts
-const GUST_INTERVAL_RANGE = 6000
-const BASE_GUST_DURATION = 4000          // ms the gust class stays applied
-
-const WIND_INTENSITY_FACTOR = 3     //Determins range of wind speeds between wind=0 and wind = 100%
+const WIND_INTENSITY_FACTOR = 3     //Determinse range of wind speeds between wind=0 and wind = 100%
 const MIN_GUST_INTENSITY = 0.5
 const MIN_SWAY_INTENSITY = 1
 
 //TODO: Add support for different plant types
 const PLANT_TYPE_WEIGHTS = {'grass': 5}
-
-
-class Plant {
-    static className = 'plant';
-    static gustClassName = 'plant-gust';
-    static swayClassName = 'plant-sway';
-    static positionWrapperClassName = 'plant-bounding-box';
-
-    static variants = []; //override by child class
-
-    static spreadRate = 2;
-    static heightAverage = 150;
-    static heightRange = 150;
-    static leanRange = 30;
-    static hueShiftRange = 40;
-    
-    static growDuration = 10;
-    static swayDurationBase = 3;
-    static swayDurationRange = 10;
-    static swayDelayRange = 3;
-    static gustPositionDelayFactor = 0.7;
-
-    id = -1;
-    appearTime = -1;
-    src = '';
-    x = -1;
-    y = 0;
-    height = -1;
-    flipped = 0;
-    lean = 0;
-    hue = 0;
-    gustDelay = 0;
-    swayDuration = 0;
-    swayDelay = 0;
-
-    //Source must be set in child class constructor
-    constructor(rand, index, appearTime) {
-        this.id = index;
-        this.appearTime = appearTime;
-        this.src = this.constructor.variants[Math.floor(rand() * this.constructor.variants.length)];
-
-        this.x = 50 + (rand() - 0.5) * Math.min(index * this.constructor.spreadRate, 100);               //X is assumed to be a percent viewport width
-        this.y = 0;
-        this.height = this.constructor.heightAverage + (rand() - 0.5) * this.constructor.heightRange;
-        //Width is based on height
-
-        this.flipped = rand() < 0.5;
-        this.lean = (rand() - 0.5) * this.constructor.leanRange;
-        this.hue = (rand() - 0.5) * this.constructor.hueShiftRange;
-
-        this.gustDelay = this.constructor.gustPositionDelayFactor * this.x/100;
-        
-        this.swayDuration = this.constructor.swayDurationBase + rand() * this.constructor.swayDurationRange;
-        this.swayDelay = rand() * this.constructor.swayDelayRange;
-    }
-
-    //By default does not take children.
-    Plant = () => {
-        const garden = useGarden();
-
-        //Keep track of age to determine whether to play growth animation
-        const age = garden.elapsedTime - this.appearTime;
-        const stillGrowing = age < this.constructor.growDuration * garden.speed;
-
-        return(
-            <this.PlantPositionWrapper>
-                <this.PlantAnimation>
-                    <img
-                        className = {this.constructor.className}
-                        src = {this.src}
-                        style = {{
-                            transformOrigin: 'bottom center',
-                            display: 'block',
-                            
-                            height: this.height,
-                            transform: `scaleX(${this.flipped ? -1 : 1}) 
-                                        rotate(${this.lean}deg)`,
-                            filter: `hue-rotate(${this.hue}deg)`,
-
-                            //Growth animation
-                            //if elapsedTime is set past age, don't show animation
-                            
-                            clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
-                            animation: stillGrowing ?
-                                `growReveal ${this.constructor.growDuration/garden.speed}s ease-in-out 0s both`
-                                : undefined,
-                        }}
-                    />
-                </this.PlantAnimation>
-            </this.PlantPositionWrapper>
-        )
-    }
-
-    PlantPositionWrapper = ({children}) => {
-        const gardenDispatch = useGardenDispatch();
-        return(
-            <div
-                className = {this.constructor.positionWrapperClassName} //Set outline visible in css to show hitbox
-                onMouseEnter={() => gardenDispatch({type:'set-hovering'})}
-                onMouseLeave={() => gardenDispatch({type:'unset-hovering'})}
-                style = {{
-                        left: `${this.x}%`,
-                        bottom: `${this.y}%`,
-                        position: 'absolute'
-                }}
-            >
-                {children}
-            </div>
-        );
-    }
-
-    PlantAnimation = ({children}) => {
-        return (
-            <this.GustAnimation>
-                <this.SwayAnimation>
-                    {children}
-                </this.SwayAnimation>
-            </this.GustAnimation>
-        );
-    }
-
-    GustAnimation = ({children}) => {
-        return(
-            <div
-                className = {this.constructor.gustClassName}
-                style = {{ 
-                    '--gust-delay': `${this.gustDelay}s`,
-                    transformOrigin: 'bottom center',
-                }}
-            >
-                {children}
-            </div>
-        )
-    }
-
-    SwayAnimation = ({children}) => {
-        return (
-            <div
-                className = {this.constructor.swayClassName}
-                style = {{
-                    '--sway-duration': `${this.swayDuration}s`,
-                    '--sway-delay': `${this.swayDelay}s`,
-                    transformOrigin: 'bottom center',
-                }}
-            >
-                {children}
-            </div>
-        )   
-    }
-}
 
 class Grass extends Plant {
     static variants = [grass1, grass2, grass3, grass4];
