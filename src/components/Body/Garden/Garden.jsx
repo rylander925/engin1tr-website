@@ -38,7 +38,12 @@ export default function Garden() {
     );
     const plants = plantGenerator.useGenerableAtTime(garden.elapsedTime);
     
-    const [defaultGrass] = useState(new Grass(Math.random, 0, 0));
+    const [defaultGrass] = useState(() => 
+        {
+            const grass = new Grass(Math.random, 0, 0);
+            grass.height = Plant.heightAverage + Plant.heightRange;
+            return grass;
+        });
 
     const gustIntensity = MIN_GUST_INTENSITY + weather.windSpeed * WIND_INTENSITY_FACTOR
     const swayIntensity = MIN_SWAY_INTENSITY + weather.windSpeed * WIND_INTENSITY_FACTOR

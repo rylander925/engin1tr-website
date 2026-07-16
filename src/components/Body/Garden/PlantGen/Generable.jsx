@@ -22,7 +22,7 @@ export default class Generator {
         return n * this.baseInterval + this.slowdownFactor * (n ** 2)
     }
 
-    //Returns the final index of plant (number - 1) at a given elapsed time
+    //Returns the final index of plant (git swinumber - 1) at a given elapsed time
     indexForTime(elapsedTime) {
         if(this.slowdownFactor == 0) {
             return Math.max(0, elapsedTime/this.baseInterval)
@@ -76,6 +76,4 @@ export default class Generator {
                 [this.indexForTime(elapsedTime), this.baseInterval, this.slowdownFactor, this.seed]
             );  
     }
-
-    //Subclass should implement method that generates an appropriate div
 }

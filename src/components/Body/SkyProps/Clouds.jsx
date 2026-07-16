@@ -109,14 +109,14 @@ function generateCloud(index, prepopulateSky = false) {
 //f(x) is continuous and concave down
 //Function is steeper as b -> 0
 //Function is more linear as b -> infinity
-function steepHill(x, b) {
+export function steepHill(x, b) {
     const c = b*(b+1);
     const a = c/b;
     return a - c/(x+b)
 }
 
 //Returns f(x) where f(x) is a linear function passing through (0, min) (1, 1)
-function linear(x, min) {
+export function linear(x, min) {
     return min + (1-min)*x
 }
 
