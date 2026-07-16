@@ -18,10 +18,9 @@
   z-index: 3;
   width: 100vw;
   height: 100vh;
-  outline: 2px solid green
 }
 
-@keyframes growReveal {
+@keyframes grow-reveal {
   from { clip-path: inset(100% 0 0 0); }
   to   { clip-path: inset(0% 0 0 0); }
 }

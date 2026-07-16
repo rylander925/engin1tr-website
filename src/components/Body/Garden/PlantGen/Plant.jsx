@@ -5,6 +5,7 @@ export default class Plant {
 
     //Default settings (as static properties)
     static className = 'plant';
+    static growthClassName = 'plant-growth';
     static gustClassName = 'plant-gust';
     static swayClassName = 'plant-sway';
     static positionWrapperClassName = 'plant-bounding-box';
@@ -76,12 +77,6 @@ export default class Plant {
 
     //Implements size, angle, color properties
     PlantImage = () => {
-        const garden = useGarden();
-
-        //Keep track of age to determine whether to play growth animation
-        const age = garden.elapsedTime - this.appearTime;
-        const stillGrowing = age < this.constructor.growDuration * garden.speed;
-
         return(
             <img
                 className = {this.constructor.className}
@@ -94,13 +89,6 @@ export default class Plant {
                     transform: `scaleX(${this.flipped ? -1 : 1}) 
                                 rotate(${this.lean}deg)`,
                     filter: `hue-rotate(${this.hue}deg)`,
-
-                    //Growth animation
-                    //if elapsedTime is set past age, doesnt show animation
-                    clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
-                    animation: stillGrowing ?
-                        `growReveal ${this.constructor.growDuration/garden.speed}s ease-in-out 0s both`
-                        : undefined,
                 }}
             />
         );
@@ -128,10 +116,39 @@ export default class Plant {
         return (
             <this.GustAnimation>
                 <this.SwayAnimation>
-                    {children}
+                    <this.GrowthAnimation>
+                        {children}
+                    </this.GrowthAnimation>
                 </this.SwayAnimation>
             </this.GustAnimation>
         );
+    }
+
+    GrowthAnimation = ({children}) => {
+        const garden = useGarden();
+
+        //Keep track of age to determine whether to play growth animation
+        const age = garden.elapsedTime - this.appearTime;
+        const stillGrowing = age < this.constructor.growDuration * garden.speed;
+
+        return(
+            <div
+                className = {this.constructor.growthClassName} //Currently not implemented by CSS file
+                style = {{
+                    transformOrigin: 'bottom center',
+                    display: 'block',
+
+                    //Growth animation
+                    //if elapsedTime is set past age, doesnt show animation
+                    clipPath: stillGrowing ? undefined : 'inset(0% 0 0 0)',
+                    animation: stillGrowing ?
+                        `grow-reveal ${this.constructor.growDuration/garden.speed}s ease-in-out 0s both`
+                        : undefined,
+                }}
+            >
+                {children}
+            </div>
+        )
     }
 
     GustAnimation = ({children}) => {
