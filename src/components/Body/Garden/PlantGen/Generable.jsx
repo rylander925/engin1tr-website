@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 
 //Time dependent item generator
-//TODO: Determine whether index should be stored inside of the class
-export class Generator {
+//To make the generator refresh on seed, place inside seed dependent memo to regenerate for the new seed
+export default class Generator {
 
     _cachedItems = new Array(0);
 
@@ -69,26 +69,11 @@ export class Generator {
         return this._cachedItems;
     }
 
-    //Generates an array of a specified amount of item attributes.
-    //Since PRNG is deterministic based on index, use indexShift to adjust the seed for each item.
-        //E.g. if indexShift is 0, an amount of 30 will always generate the same 30 items. Using indexShift of 30 will generate 30 new items, while indexShift 15 will still have 15 of the old items.
-    generateAmount(amount, indexShift) {
-        return Array.from({ length:(amount) }, (_, i) => this.generateItem(i + indexShift));
-    }
-
-    //Custom hook that calls useMemo. Generates and returns a memoized array of item attributes. Update indexshift, amount, or seed to regenerate items
-    useGenerableAmount(amount, indexShift) {
-        return useMemo( 
-            () => this.generateWindow(amount, indexShift),
-            [amount, indexShift, this.seed]
-        )
-    }
-
     //Custom hook that calls useMemo. Generates and returns a memoized array of item attributes based on the given time. Updates when time changes, or when generation conditions (baseinterval, slowdownfactor, seed) change.
     useGenerableAtTime(elapsedTime) {
         return useMemo(
                 () => this.generateAt(elapsedTime), 
-                [elapsedTime, this.baseInterval, this.slowdownFactor, this.seed]
+                [this.indexForTime(elapsedTime), this.baseInterval, this.slowdownFactor, this.seed]
             );  
     }
 

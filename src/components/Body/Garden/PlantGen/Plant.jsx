@@ -1,7 +1,7 @@
-import { useGarden, useGardenDispatch } from "../../../GardenContext";
-import './Garden.css'
+import { useGarden, useGardenDispatch } from "../../../../GardenContext";
+import '../Garden.css'
 
-export class Plant {
+export default class Plant {
     static className = 'plant';
     static gustClassName = 'plant-gust';
     static swayClassName = 'plant-sway';
@@ -12,7 +12,7 @@ export class Plant {
     static spreadRate = 2;                  // determines how far plants can grow from the center 
                                             // as a function of the number of plants
 
-    static heightAverage = 200;             // pixels
+    static heightAverage = 175;             // pixels
     static heightRange = 150;               // pixels, total range in grass height
     static leanRange = 30;                  // angle, total range in plant tilt
     static hueShiftRange = 40;              // angle, total range in hue between plants (used in hueRotate transformation)

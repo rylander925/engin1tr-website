@@ -1,19 +1,16 @@
 import { useState, useEffect, useMemo } from 'react'
-import grassImg from '../../../assets/grass.png'
-import grass1 from '../../../assets/plants/grass1.svg'
-import grass2 from '../../../assets/plants/grass2.svg'
-import grass3 from '../../../assets/plants/grass3.svg'
-import grass4 from '../../../assets/plants/grass4.svg'
-import { Generator } from './Generable' 
-import './Garden.css'
 import { useGarden, useGardenDispatch } from '../../../GardenContext'
 import { useConditions, useConditionsDispatch } from '../../../ConditionsContext'
-import { Plant } from './Plant'
+import Generator from './PlantGen/Generable'
+import PlantGenerator from './PlantGen/PlantGenerator'
+import Plant from './PlantGen/Plant'
+import Grass from './PlantGen/Grass'
+import './Garden.css'
 
 //Plant gen controls
-const BASE_INTERVAL = 1         //Base interval between plant gens
-const SLOWDOWN_FACTOR = 0.5     //larger factor slows down growth as # of blades increases
-                                //num = base*t + slowdown*t^2
+const BASE_INTERVAL = 1             //Base interval between plant gens
+const SLOWDOWN_FACTOR = 0.5         //larger factor slows down growth as # of blades increases
+                                    //num = base*t + slowdown*t^2
 
 //Gust and wind controls
 const GUST_INTERVAL = 12000         // average ms between automatic wind gusts
@@ -24,30 +21,6 @@ const WIND_INTENSITY_FACTOR = 3     //Determinse range of wind speeds between wi
 const MIN_GUST_INTENSITY = 0.5
 const MIN_SWAY_INTENSITY = 1
 
-//TODO: Add support for different plant types
-const PLANT_TYPE_WEIGHTS = {'grass': 5}
-
-class Grass extends Plant {
-    static variants = [grass1, grass2, grass3, grass4];
-}
-
-//
-class PlantGenerator extends Generator {
-    constructor( baseInterval, slowdownFactor, seed ) {
-        super(baseInterval, slowdownFactor, seed);
-    }
-
-    /*Returns a plant object
-        TODO: Add support to randomly select between different plant types
-    */
-    generateItemAttributes(rand, index) {
-        const plant = new Grass(rand, index, this.timeForIndex(index));
-        return(plant);
-    }
-}
-
-//Make garden div
-    //FIXME: Get gust functionality to work properly
 export default function Garden() {
     const conditions = useConditions();
     const weather = conditions.weather
