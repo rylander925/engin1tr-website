@@ -96,6 +96,14 @@ function WeatherUI() {
           value={conditions.weather.hour}
           onChange={e => handleSlider('hour', e.target.value)}
         />
+
+        <hr></hr>
+
+        <label>Volume: {formatPercent(conditions.volume)}</label>
+        <input type="range" min="0" max="1" step="0.05"
+          value={conditions.volume}
+          onChange={e => dispatch({type: 'update-volume', volume: parseFloat(e.target.value)})}
+        />
       </div>
     </>
   )
