@@ -10,14 +10,12 @@ function SoundHandler() {
 
   const handleAccept = () => {
     audio.current = {
-      rainHeavy: new Howl({src: ['/sounds/Heavy Rain.wav']}),
-      rainLight: new Howl({src: ['/sounds/Light Rain.wav']}),
-      windStrong: new Howl({src: ['/sounds/Strong Wind.wav']}),
-      windLight: new Howl({src: ['/sounds/Light Wind.wav']})
+      rainHeavy: new Howl({src: ['/sounds/Heavy Rain.wav'], volume: 0, loop: true}),
+      rainLight: new Howl({src: ['/sounds/Light Rain.wav'], volume: 0, loop: true}),
+      windStrong: new Howl({src: ['/sounds/Strong Wind.wav'], volume: 0, loop: true}),
+      windLight: new Howl({src: ['/sounds/Light Wind.wav'], volume: 0, loop: true})
     }
     Object.values(audio.current).forEach(sound => {
-      sound.loop(true)
-      sound.volume(0)
       sound.play()
     })
     setAccepted(true)
@@ -38,7 +36,7 @@ function SoundHandler() {
 
     updateSound(rainHeavy, rainLight, precipitation, thresh, duration)
     updateSound(windStrong, windLight, windSpeed, thresh, duration)
-  }, [weather])
+  }, [weather, accepted])
   
   if (accepted) return null
 
