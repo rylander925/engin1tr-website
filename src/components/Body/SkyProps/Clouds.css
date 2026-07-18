@@ -15,10 +15,9 @@
 }
 @keyframes drift {
     from { transform: translateX(-80vw);}
-    to   { transform: translateX(180vw);}
+    to   { transform: translateX(100vw);}
 
 }
-
 
 .clouds {
     z-index: 0;

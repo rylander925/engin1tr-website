@@ -4,7 +4,8 @@ import { useState, useEffect, useMemo } from 'react'
 //To make the generator refresh on seed, place inside seed dependent memo to regenerate for the new seed
 export default class Generator {
 
-    _cachedItems = new Array(0);
+    static maxItems = 500;
+    #cachedItems = new Array(0);
 
     //Generates items acording to B*t + S*t^2 where B is base interval, S is slowdown factor
     constructor(baseInterval, slowdownFactor, seed) {
@@ -56,17 +57,17 @@ export default class Generator {
 
     //generate full list at given time
     generateAt(elapsedTime) {
-        const index = this.indexForTime(elapsedTime);
-        if(this._cachedItems.length <= index) {
-            const startIndex = this._cachedItems.length;
+        const index = Math.min(this.indexForTime(elapsedTime), this.constructor.maxItems);
+        if(this.#cachedItems.length <= index) {
+            const startIndex = this.#cachedItems.length;
             const newItems = Array.from(
                     {length:(index+1 - startIndex)}, 
-                    (_, i) => this.generateItem(i + this._cachedItems.length)
+                    (_, i) => this.generateItem(i + this.#cachedItems.length)
                 )
-            this._cachedItems.push(...newItems);
+            this.#cachedItems.push(...newItems);
         }
-        this._cachedItems.length = index + 1;
-        return this._cachedItems;
+        this.#cachedItems.length = index + 1;
+        return this.#cachedItems;
     }
 
     //Custom hook that calls useMemo. Generates and returns a memoized array of item attributes based on the given time. Updates when time changes, or when generation conditions (baseinterval, slowdownfactor, seed) change.
