@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useConditions } from '../../../ConditionsContext'
-import Clouds from '../SkyProps/Clouds'
-import Rain from '../Rain/Rain';
+import Clouds from '../SkyProps/Clouds/Clouds'
+import { steepHill } from '../SkyProps/Clouds/Clouds';
+import Rain from '../SkyProps/Rain/Rain';
 import './Background.css'
 
 function Background({children})
@@ -25,11 +26,11 @@ function Background({children})
       timeRange = 'night'; 
     } 
 
-    const isStormy = weatherData.precipitation > 0 || weatherData.cloudCover > 0.8; 
+    const isStormy = weatherData.precipitation > 0 || weatherData.cloudCover > 0.9; 
     weatherState = isStormy ? 'storm' : 'clear'; 
   }
 
-  const stormOpacity = weatherData ? (weatherData.precipitation > 1 ? weatherData.precipitation / 10 : weatherData.precipitation) : 0;
+  const stormOpacity = weatherData ? (weatherData.precipitation > 1 ? weatherData.precipitation / 10 : steepHill(weatherData.precipitation, 0.5)) : 0;
 
   return ( 
     <section
