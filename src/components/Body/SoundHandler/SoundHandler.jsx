@@ -5,7 +5,7 @@ import './SoundHandler.css'
 
 function SoundHandler() {
   const [accepted, setAccepted] = useState(false)
-  const {weather} = useConditions()
+  const {weather: {precipitation, windSpeed}} = useConditions()
   const audio = useRef(null)
 
   const handleAccept = () => {
@@ -29,14 +29,12 @@ function SoundHandler() {
   useEffect(() => {
     if (!accepted) return
     const {rainHeavy, rainLight, windStrong, windLight} = audio.current
-    const {precipitation, windSpeed} = weather
 
-    const thresh = 0.5
     const duration = 1000
 
-    updateSound(rainHeavy, rainLight, precipitation, thresh, duration)
-    updateSound(windStrong, windLight, windSpeed, thresh, duration)
-  }, [weather, accepted])
+    updateSound(rainHeavy, rainLight, precipitation, 0.5, duration)
+    updateSound(windStrong, windLight, windSpeed, 0.45, duration)
+  }, [precipitation, windSpeed, accepted])
   
   if (accepted) return null
 
