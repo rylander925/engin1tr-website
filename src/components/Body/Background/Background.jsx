@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useConditions } from '../../../ConditionsContext'
-import Clouds from '../SkyProps/Clouds'
-import { steepHill } from '../SkyProps/Clouds';
+import Clouds from '../SkyProps/Clouds/Clouds'
+import { steepHill } from '../SkyProps/Clouds/Clouds';
 import Rain from '../SkyProps/Rain/Rain';
 import './Background.css'
 
