@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Howl } from 'howler';
 import { useConditions } from '../../../ConditionsContext'
 import './SoundHandler.css'
 
@@ -7,46 +8,19 @@ function SoundHandler() {
   const {weather} = useConditions()
   const audio = useRef(null)
 
-  useEffect(() => {
+  const handleAccept = () => {
     audio.current = {
-      rainHeavy: new Audio('/sounds/Heavy Rain.wav'),
-      rainLight: new Audio('/sounds/Light Rain.wav'),
-      windStrong: new Audio('/sounds/Strong Wind.wav'),
-      windLight: new Audio('/sounds/Light Wind.wav')
+      rainHeavy: new Howl({src: ['/sounds/Heavy Rain.wav']}),
+      rainLight: new Howl({src: ['/sounds/Light Rain.wav']}),
+      windStrong: new Howl({src: ['/sounds/Strong Wind.wav']}),
+      windLight: new Howl({src: ['/sounds/Light Wind.wav']})
     }
     Object.values(audio.current).forEach(sound => {
-      sound.loop = true
+      sound.loop(true)
+      sound.volume(0)
+      sound.play()
     })
-  }, [])
-
-  const playSound = (sound) => {
-    sound.play().catch(() => {console.log("Audio blocked")})
-  }
-
-  const transitionSound = (newSound, oldSound) => {
-    // Issue: Transitions can occur at the same time
-    if (newSound && !newSound.paused) return // This is an issue
-
-    const maxVolume = 100
-    const duration = 5000
-    const interval = duration / maxVolume
-
-    if (newSound) {
-      newSound.volume = 0
-      playSound(newSound)
-    }
-
-    let count = 0
-    const changeVolume = setInterval(() => {
-      count++
-      const newVolume = count / maxVolume
-      if (newSound) newSound.volume = newVolume
-      oldSound.volume = 1 - newVolume
-      if (count >= maxVolume) {
-        oldSound.pause()
-        clearInterval(changeVolume)
-      }
-    }, interval)
+    setAccepted(true)
   }
 
   useEffect(() => {
@@ -54,23 +28,15 @@ function SoundHandler() {
     const {rainHeavy, rainLight} = audio.current
     const {precipitation} = weather
 
-    if (precipitation >= 0.5) {
-      transitionSound(rainHeavy, rainLight)
-    }
-    else if (precipitation > 0) {
-      transitionSound(rainLight, rainHeavy)
-    }
-    else {
-      transitionSound(null, rainHeavy)
-      transitionSound(null, rainLight)
-    }
+    rainHeavy.fade(rainHeavy.volume(),  Math.max((precipitation - 0.5) * 2, 0), 1000)
+    rainLight.fade(rainLight.volume(), Math.min(precipitation / 0.5, 1), 1000)
   }, [weather])
   
   if (accepted) return null
 
   return (
     <>
-      <div className='sound-overlay' onClick={() => setAccepted(true)}>
+      <div className='sound-overlay' onClick={handleAccept}>
         <h1>This website has sound</h1>
         <h3>Click anywhere to accept</h3>
       </div>
