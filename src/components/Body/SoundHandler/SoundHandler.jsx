@@ -23,13 +23,21 @@ function SoundHandler() {
     setAccepted(true)
   }
 
+  const updateSound = (heavy, light, value, thresh, duration) => {
+    heavy.fade(heavy.volume(), Math.max((value - thresh) * 2, 0), duration)
+    light.fade(light.volume(), Math.min(value / thresh, 1), duration)
+  }
+
   useEffect(() => {
     if (!accepted) return
-    const {rainHeavy, rainLight} = audio.current
-    const {precipitation} = weather
+    const {rainHeavy, rainLight, windStrong, windLight} = audio.current
+    const {precipitation, windSpeed} = weather
 
-    rainHeavy.fade(rainHeavy.volume(),  Math.max((precipitation - 0.5) * 2, 0), 1000)
-    rainLight.fade(rainLight.volume(), Math.min(precipitation / 0.5, 1), 1000)
+    const thresh = 0.5
+    const duration = 1000
+
+    updateSound(rainHeavy, rainLight, precipitation, thresh, duration)
+    updateSound(windStrong, windLight, windSpeed, thresh, duration)
   }, [weather])
   
   if (accepted) return null
