@@ -21,6 +21,7 @@
   stroke: #45a247; 
   stroke-width: 4px; 
   stroke-linecap: round; 
+ 
   stroke-dasharray: 1000; 
   stroke-dashoffset: 1000; 
   animation: drawStem var(--stem-duration, 5s) ease-out both; 
@@ -31,6 +32,31 @@
   0% { stroke-dashoffset: 1000; } 
   100% { stroke-dashoffset: 0; } 
 } 
+
+.flower-leaf
+{
+  stroke: rgba(0, 0, 0, 0.05);
+  stroke-width: 1px;
+  stroke-linejoin: round;
+}
+
+.leaf-left
+{
+  transform-origin: 80px 0px;
+  animation: alternatingLeafPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) var(--stagger-delay, 0s) both;
+}
+
+.leaf-right
+{
+  transform-origin: 80px 0px;
+  animation: alternatingLeafPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) var(--stagger-delay, 0s) both;
+}
+
+@keyframes alternatingLeafPop
+{
+  0% { transform: translate(80px, var(--leaf-y-coordinate)) scale(0); }
+  100% { transform: translate(80px, var(--leaf-y-coordinate)) scale(1); }
+}
 
 .flower-geo-petal
 { 
@@ -49,13 +75,13 @@
 .flower-center
 { 
   transform-origin: 0px 0px; 
-  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; 
+  animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; 
 } 
 
 .flower-petals-group
 { 
   transform-origin: 0px 0px; 
-  animation: bloomIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; 
+  animation: bloomIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; 
 } 
 
 @keyframes popIn
