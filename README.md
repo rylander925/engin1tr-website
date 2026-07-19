@@ -5,7 +5,7 @@ Alternatively, its a nice background; you can adjust the garden and weather in t
 
 ## Notes & Attributions
 
-We use an audio library (Howler.js)---if the website breaks, run npm install.
+We use an audio library ([Howler.js]https://github.com/goldfire/howler.js)---if our website breaks, try running npm install.
 
 We use the [Open-Meto API](https://open-meteo.com/) to retrieve weather data.
 
@@ -13,5 +13,5 @@ We also pasted a mulberry32 PRNG function. There's plenty of details if you sear
 
 ## AI Use
 
-This is all of our first webdev projects, so AI was really useful for getting started, and learning about tools it would've been difficult to find otherwise!
-That being said, we used it with the intent of learning, so we did not use AI generated code in our website. 
+This is our first webdev project for all of us, so AI was really useful for getting started and learning about tools it would've been difficult to find otherwise!
+That being said, we used it with the intent of learning so we did not use AI generated code in our website. 
