@@ -5,7 +5,7 @@ Alternatively, its a nice background; you can adjust the garden and weather in t
 
 ## Notes & Attributions
 
-We use an audio library ([Howler.js]https://github.com/goldfire/howler.js)---if our website breaks, try running npm install.
+We use an audio library ([Howler.js](https://github.com/goldfire/howler.js))---if our website breaks, try running npm install.
 
 We use the [Open-Meto API](https://open-meteo.com/) to retrieve weather data.
 
