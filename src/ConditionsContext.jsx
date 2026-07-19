@@ -15,6 +15,7 @@ const initialConditions = {
     autoUpdateClock: true,   //If false, hour will not automatically update
     locationName: "",
     zipCode: "",
+    volume: 0.2
 };
 
 const ConditionsContext = createContext(null);
@@ -70,6 +71,9 @@ function conditionsReducer(conditions, action) {
                     [action.field]: action.value
                 }
             };
+        }
+        case 'update-volume': {
+            return {...conditions, volume: action.volume}
         }
         case 'set-seed': {
             return {...conditions, 

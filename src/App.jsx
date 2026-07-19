@@ -6,6 +6,7 @@ import Timer from './components/Menu/Timer/Timer.jsx'
 import Clouds from './components/Body/SkyProps/Clouds/Clouds.jsx'
 import Stars from './components/Body/SkyProps/Stars/Stars.jsx'
 import Clock from './components/Menu/Clock/Clock.jsx'
+import SoundHandler from './components/Body/SoundHandler/SoundHandler.jsx'
 import { ConditionsProvider }  from './ConditionsContext.jsx'
 import { GardenContextProvider } from './GardenContext.jsx'
 import './App.css'
@@ -14,6 +15,7 @@ function App() {
   return (
     <>
       <ConditionsProvider>
+        <SoundHandler />
         <GardenContextProvider>
           <Background className = 'background'>
             <Menu />
