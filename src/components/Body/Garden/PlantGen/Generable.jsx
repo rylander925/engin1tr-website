@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
 
 //Time dependent item generator
-//TODO: Determine whether index should be stored inside of the class
-export class Generator {
+//To make the generator refresh on seed, place inside seed dependent memo to regenerate for the new seed
+export default class Generator {
+
+    static maxItems = 500;
+    #cachedItems = new Array(0);
 
     //Generates items acording to B*t + S*t^2 where B is base interval, S is slowdown factor
     constructor(baseInterval, slowdownFactor, seed) {
@@ -15,18 +18,19 @@ export class Generator {
     }
 
     //Return the elapsed time at which nth plant appears
-    timeForIndex(n) {
+    timeForIndex(index) {
+        const n = index + 1
         return n * this.baseInterval + this.slowdownFactor * (n ** 2)
     }
 
-    //Return the number of plants (called index for consistency) at a given elapsed time
+    //Returns the final index of plant (git swinumber - 1) at a given elapsed time
     indexForTime(elapsedTime) {
         if(this.slowdownFactor == 0) {
             return Math.max(0, elapsedTime/this.baseInterval)
         }
         const a = this.slowdownFactor, b = this.baseInterval, c = -elapsedTime;
         const solution = (-b + Math.sqrt(b**2 - 4*a*c)) / (2*a);
-        return Math.max(0, Math.floor(solution));
+        return (Math.max(0, Math.floor(solution)) - 1);
     }
 
     //Returns a PRNG. You can search up 'mulberry32' for details, this function is well documented.
@@ -41,7 +45,6 @@ export class Generator {
 
     //Generates a PRNG for the item and passes it to generateItemAttributes, which uses the PRNG to generate item specific attributes
     generateItem(index) {
-        index = index + 1;
         const rand = this.rngForIndex(index);
         return this.generateItemAttributes(rand, index);
     }
@@ -54,31 +57,24 @@ export class Generator {
 
     //generate full list at given time
     generateAt(elapsedTime) {
-        return Array.from({ length:this.indexForTime(elapsedTime) }, (_, i) => this.generateItem(i));
-    }
-
-    //Generates an array of a specified amount of item attributes.
-    //Since PRNG is deterministic based on index, use indexShift to adjust the seed for each item.
-        //E.g. if indexShift is 0, an amount of 30 will always generate the same 30 items. Using indexShift of 30 will generate 30 new items, while indexShift 15 will still have 15 of the old items.
-    generateAmount(amount, indexShift) {
-        return Array.from({ length:(amount) }, (_, i) => this.generateItem(i + indexShift));
-    }
-
-    //Custom hook that calls useMemo. Generates and returns a memoized array of item attributes. Update indexshift, amount, or seed to regenerate items
-    useGenerableAmount(amount, indexShift) {
-        return useMemo( 
-            () => this.generateWindow(amount, indexShift),
-            [amount, indexShift, this.seed]
-        )
+        const index = Math.min(this.indexForTime(elapsedTime), this.constructor.maxItems);
+        if(this.#cachedItems.length <= index) {
+            const startIndex = this.#cachedItems.length;
+            const newItems = Array.from(
+                    {length:(index+1 - startIndex)}, 
+                    (_, i) => this.generateItem(i + this.#cachedItems.length)
+                )
+            this.#cachedItems.push(...newItems);
+        }
+        this.#cachedItems.length = index + 1;
+        return this.#cachedItems;
     }
 
     //Custom hook that calls useMemo. Generates and returns a memoized array of item attributes based on the given time. Updates when time changes, or when generation conditions (baseinterval, slowdownfactor, seed) change.
     useGenerableAtTime(elapsedTime) {
         return useMemo(
                 () => this.generateAt(elapsedTime), 
-                [elapsedTime, this.baseInterval, this.slowdownFactor, this.seed]
+                [this.indexForTime(elapsedTime), this.baseInterval, this.slowdownFactor, this.seed]
             );  
     }
-
-    //Subclass should implement method that generates an appropriate div
 }

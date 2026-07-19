@@ -7,16 +7,20 @@
     transform: translateX(-50%);
 }
 
+.plant {
+  transform-origin: bottom center;
+  display: block;
+}
+
 .garden, .garden-gusting {
   position: fixed;
   inset: 0;
   z-index: 3;
   width: 100vw;
   height: 100vh;
-  outline: 2px solid green
 }
 
-@keyframes growReveal {
+@keyframes grow-reveal {
   from { clip-path: inset(100% 0 0 0); }
   to   { clip-path: inset(0% 0 0 0); }
 }
@@ -40,6 +44,7 @@
   animation-delay: var(--sway-delay);
   animation-iteration-count: infinite;
   animation-fill-mode: both;
+  transform-origin: bottom center;
 }
  
 .garden-gusting .plant-gust {
@@ -48,5 +53,6 @@
   animation-delay: var(--gust-delay);
   animation-iteration-count: 1;
   animation-timing-function: ease-in-out;
+  transform-origin: bottom center;
 }
  

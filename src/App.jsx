@@ -3,7 +3,8 @@ import Garden from './components/Body/Garden/Garden.jsx'
 import Background from './components/Body/Background/Background.jsx'
 import Menu from './components/Menu/Menu.jsx'
 import Timer from './components/Menu/Timer/Timer.jsx'
-import Clouds from './components/Body/SkyProps/Clouds.jsx'
+import Clouds from './components/Body/SkyProps/Clouds/Clouds.jsx'
+import Stars from './components/Body/SkyProps/Stars/Stars.jsx'
 import Clock from './components/Menu/Clock/Clock.jsx'
 import SoundHandler from './components/Body/SoundHandler/SoundHandler.jsx'
 import { ConditionsProvider }  from './ConditionsContext.jsx'
@@ -24,6 +25,7 @@ function App() {
             </div>
             <Clouds />
             <Garden />
+            <Stars />
           </Background>
         </GardenContextProvider>
       </ConditionsProvider>

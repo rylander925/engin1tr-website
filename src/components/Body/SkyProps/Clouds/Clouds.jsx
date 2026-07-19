@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import cloud1 from '../../../assets/clouds/cloud1.svg'
-import cloud2 from '../../../assets/clouds/cloud2.svg'
-import cloud3 from '../../../assets/clouds/cloud3.svg'
-import cloud4 from '../../../assets/clouds/cloud4.svg'
-import { useConditions } from '../../../ConditionsContext'
+import cloud1 from '../../../../assets/clouds/cloud1.svg'
+import cloud2 from '../../../../assets/clouds/cloud2.svg'
+import cloud3 from '../../../../assets/clouds/cloud3.svg'
+import cloud4 from '../../../../assets/clouds/cloud4.svg'
+import { useConditions } from '../../../../ConditionsContext'
 import './Clouds.css'
 
 const VARIANTS = [cloud1, cloud2, cloud3, cloud4]
@@ -11,7 +11,7 @@ const VARIANTS = [cloud1, cloud2, cloud3, cloud4]
 //cloud gen controls
 const WIDTH_AVERAGE = 20            // Average cloud with as percentage of vw at 50% cloud cover
 const WIDTH_RANGE = 10              // Range in cloud with as percentage of vw
-const CLOUD_COVER_FACTOR = 3        // Amount to multiply width * cloudcover * cloudcoverFactor
+const CLOUD_COVER_FACTOR = 2.5        // Amount to multiply width * cloudcover * cloudcoverFactor
 const MIN_CLOUD_COVER_SCALE = 0.1   // Minimum cloud scaling when cloud cover is small
 const Y_RANGE = 100                 // Range in y values from top as a percent
 const LEAN_RANGE = 30               // Range of cloud rotation in degrees (around vertical)
@@ -31,7 +31,7 @@ const BASE_DRIFT_DURATION = 50      //How long each cloud is on screen; actual r
 const DURATION_FACTOR_RANGE = 0.2   //Range in speeds clouds can move 
 const MAX_WIND_SPEED = 3            //Divides base duration; multiplied by conditions.weather.windSpeed (so at max windspeed, base duration will be divided by 3)
 const MIN_WIND_SPEED = 0.1
-const MAX_CLOUDS = 70               //Clouds when cloud cover is 100%
+const MAX_CLOUDS = 50               //Clouds when cloud cover is 100%
 
 const GUST_INTERVAL = 10000 // ms between automatic wind gusts
 const GUST_DURATION = 4000   // ms the gust class stays applied
@@ -41,7 +41,7 @@ const GUST_DURATION = 4000   // ms the gust class stays applied
 
 function Cloud( {cloud, index, cloudCover, driftDuration, visible, rerollCloud} ) {
     driftDuration = ELEVATION_DURATION_FACTOR * driftDuration / cloud.closenessFactor * cloud.driftFactor;
-    const cloudCoverScale = linear(cloudCover, MIN_CLOUD_COVER_SCALE) * CLOUD_COVER_FACTOR; //amount to scale cloud cover by: factor * linear function between minCloudCover & 1
+    const cloudCoverScale = linear(cloudCover, MIN_CLOUD_COVER_SCALE) * CLOUD_COVER_FACTOR; //amount to scale cloud size by: factor * linear function between minCloudCover & 1
     return(
         //Position wrapper
         <div
@@ -109,14 +109,14 @@ function generateCloud(index, prepopulateSky = false) {
 //f(x) is continuous and concave down
 //Function is steeper as b -> 0
 //Function is more linear as b -> infinity
-function steepHill(x, b) {
+export function steepHill(x, b) {
     const c = b*(b+1);
     const a = c/b;
     return a - c/(x+b)
 }
 
 //Returns f(x) where f(x) is a linear function passing through (0, min) (1, 1)
-function linear(x, min) {
+export function linear(x, min) {
     return min + (1-min)*x
 }
 
@@ -128,6 +128,10 @@ export default function Clouds() {
 
     const [clouds, setClouds] = useState(() => Array.from({length:MAX_CLOUDS}, (_, i) => generateCloud(i, true))); //NOTE ID assigned to clouds is index + 1, not index
 
+    const maxCloudSize = (WIDTH_AVERAGE + WIDTH_RANGE) * CLOUD_COVER_FACTOR
+
+
+    //Rerolls cloud attributes when they move offscreen rather than generating completely new clouds 
     const rerollCloud = (index) => {
         setClouds((prev) => {
             const nextClouds = [...prev];
