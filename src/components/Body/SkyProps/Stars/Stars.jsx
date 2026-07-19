@@ -13,7 +13,7 @@ const OPACITY_MAX = 0.9
 
 const MAX_STARS = 250               //Clouds when cloud cover is 100%
 
-function Star( {star, index, visible, dimensions} ) {
+function Star( {star, index, visible, dimensions, rain} ) {
     return(
         <circle
             className = 'star'
@@ -23,7 +23,7 @@ function Star( {star, index, visible, dimensions} ) {
             style = {{
                 fill: 'white',
                 filter: `hue-rotate(${star.hue}deg)`,
-                opacity: visible ? star.opacity : 0,
+                opacity: visible ? star.opacity * (1-rain) : 0,
             }}
         >
         </circle>
@@ -76,6 +76,7 @@ export default function Stars() {
                     star = {star}
                     visible = {index < visibleStars}
                     dimensions = {dimensions}
+                    rain = {conditions.weather.precipitation}
                 />
             )}
         </svg>

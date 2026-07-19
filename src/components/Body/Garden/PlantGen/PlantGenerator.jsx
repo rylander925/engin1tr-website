@@ -3,7 +3,7 @@ import Grass from "./Grass";
 import Flower from "./Flower";
 
 //TODO: Add support for different plant types
-const PLANT_TYPE_WEIGHTS = {'grass': 5, 'flower': 2}
+const PLANT_TYPE_WEIGHTS = {'grass': 5, 'flower': 1}
 
 export default class PlantGenerator extends Generator {
     constructor( baseInterval, slowdownFactor, seed ) {
