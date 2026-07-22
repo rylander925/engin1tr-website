@@ -4,7 +4,7 @@ const HEAVY_RAIN = 10; //10mm of rain per hour
 const HEAVY_WIND = 50; //50km per hour
 
 const initialConditions = {
-    seed: 1,              //PRNG is seeded; this can be any number, determines plant generation
+    seed: Math.floor(Math.random()*1000),              //PRNG is seeded; this can be any number, determines plant generation. 1000 is the current initial max for numbers easy to remember.
     weather: { 
         zipcode: 0,
         precipitation: 0, //fraction: 1=heavy, 0=none (>1 = extreme)

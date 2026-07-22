@@ -4,9 +4,9 @@ const GardenContext = createContext(null);
 const GardenDispatchContext = createContext(null);
 
 const initialGarden = {
-    elapsedTime: 1800,
+    elapsedTime: 0,
     isHovering: false,
-    speed: 10,           //Factor to speed up growth speed 1 -> 1s real = 1s simulated
+    speed: 1,           //Factor to speed up growth speed 1 -> 1s real = 1s simulated
 }
 
 export function GardenContextProvider({children}) {
