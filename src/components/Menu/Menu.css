@@ -22,7 +22,10 @@
   background-color: rgb(34, 33, 33);
   opacity: 0.7;
   padding: 0.5rem;
-  width: 10rem;
+  width: min(10rem, 60vw);
+  max-height: 90vh;
+  overflow-y: auto;
+
   font-family: var(--mono);
   visibility: hidden;
   transform: translateX(-100%);

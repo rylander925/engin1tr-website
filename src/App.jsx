@@ -18,16 +18,16 @@ function App() {
         <SoundHandler />
         <GardenContextProvider>
           <div className = 'background'>
-          <Background >
-            <div className = 'screen-text'>
-              <Menu />
-              <Timer />
-              <Clock />
-            </div>
-            <Clouds />
-            <Garden />
-            <Stars />
-          </Background>
+            <Background >
+              <div className = 'screen-text'>
+                <Menu />
+                <Timer />
+                <Clock />
+              </div>
+              <Clouds />
+              <Garden />
+              <Stars />
+            </Background>
           </div>
         </GardenContextProvider>
       </ConditionsProvider>

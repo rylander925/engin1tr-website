@@ -2,6 +2,15 @@
   position: absolute;
   text-align: right;
   top: 0;          
-  right: 20px;
+  right: 1rem;
   margin: 0;
+}
+
+@media (max-width: 600px) {
+  .clock {
+    position: absolute;
+    top: 2rem;
+    right: 0;
+    writing-mode: vertical-rl;
+  }
 }

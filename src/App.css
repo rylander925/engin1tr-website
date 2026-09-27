@@ -24,7 +24,7 @@
 
 #screen-text {
   font-family: var(--mono);
-  font-size: medium;
+  font-size: clamp(0.7rem, 1vw, 1.5rem);
   border-radius: 4px;
   color: var(--screen-text-color);
   transition: color 2s ease;
