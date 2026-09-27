@@ -9,7 +9,9 @@ function Menu() {
   return (
     <>
       <div className='menu-container'>
-        <button className='menu-button' onClick={() => setIsOpen((prev) => !prev)}>⚙️</button>
+      <button className='menu-button' id='screen-text' onClick={() => setIsOpen((prev) => !prev)}>
+          [M]
+      </button>
         <div className={`menu-list ${isOpen ? 'open' : ''}`}>
           <GeneralUI />
           <hr />

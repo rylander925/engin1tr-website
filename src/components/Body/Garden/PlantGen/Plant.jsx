@@ -69,7 +69,7 @@ export default class Plant {
         return(
             <this.PlantPositionWrapper>
                 <this.PlantAnimation>
-                    <this.PlantImage />
+                    <this.PlantImage/>
                 </this.PlantAnimation>
             </this.PlantPositionWrapper>
         );
@@ -81,6 +81,7 @@ export default class Plant {
             <img
                 className = {this.constructor.className}
                 src = {this.src}
+                draggable = "false"
                 style = {{
                     transformOrigin: 'bottom center',
                     display: 'block',

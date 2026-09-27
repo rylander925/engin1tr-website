@@ -4,7 +4,13 @@
   z-index: 0;
   width: 100vh;
   height: 100vh;
+  user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
+
+
 
 .UI {
   position: fixed;

@@ -17,9 +17,10 @@ function App() {
       <ConditionsProvider>
         <SoundHandler />
         <GardenContextProvider>
-          <Background className = 'background'>
-            <Menu />
+          <div className = 'background'>
+          <Background >
             <div className = 'screen-text'>
+              <Menu />
               <Timer />
               <Clock />
             </div>
@@ -27,6 +28,7 @@ function App() {
             <Garden />
             <Stars />
           </Background>
+          </div>
         </GardenContextProvider>
       </ConditionsProvider>
     </>
