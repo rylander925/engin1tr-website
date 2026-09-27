@@ -69,7 +69,7 @@ export default function Garden() {
             //Plays animation by flipping className on and off. Not best but whatever TODO: Find better way
             gustTimeout = setTimeout(() => {
                 setGusting(false);
-                setTimeout(() => setGusting(true), 250); //Multiply by 2 to allow plants growing mid gust to blow. Not a complete fix
+                setTimeout(() => setGusting(true), 250); //Multiply by 2 to allow plants growing mid gust to blow. Terrible code
                 scheduleGust();
             }, gustInterval);
         };

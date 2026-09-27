@@ -73,7 +73,7 @@ export default class Flower extends Plant {
   static growthClassName = 'flower-growth'; 
   static positionWrapperClassName = 'flower-bounding-box'; 
   static stemHeightAvg = 160; 
-  static stemHeightRange = 130
+  static stemHeightRange = 130;
   static flowerSize = 160;
   static petalTypes = [{src: Petal1, petals:[5,8]}, {src: Petal2, petals:[5,8]}, {src: Petal3, petals:[8,13]}]
   static petalCol = ['#ae2732', '#4b95ef', '#f5f0f0', '#ffa601', '#ff9ff3', '#5f27cd']; 
