@@ -4,7 +4,13 @@
   z-index: 0;
   width: 100vh;
   height: 100vh;
+  user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
+
+
 
 .UI {
   position: fixed;
@@ -18,7 +24,7 @@
 
 #screen-text {
   font-family: var(--mono);
-  font-size: medium;
+  font-size: clamp(0.7rem, 1vw, 1.5rem);
   border-radius: 4px;
   color: var(--screen-text-color);
   transition: color 2s ease;
